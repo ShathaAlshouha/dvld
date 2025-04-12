@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace dvld.business
 {
-    internal class person
+    internal class clsPerson
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
