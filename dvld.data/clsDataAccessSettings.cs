@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace dvld.data
 {
-    internal class Person
+    public class clsDataAccessSettings
     {
-        // test tests
+        public static string ConnectionString = "Server=.;Database=DVLD;User Id=sa;Password=123456;";
     }
 }
