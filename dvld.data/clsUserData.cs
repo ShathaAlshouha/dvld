@@ -256,7 +256,7 @@ namespace dvld.data
 
             string query = @"SELECT  Users.UserID, Users.PersonID,
                             FullName = People.FirstName + ' ' + People.SecondName + ' ' + ISNULL( People.ThirdName,'') +' ' + People.LastName,
-                             Users.UserName, Users.IsActive
+                            Users.UserName, Users.IsActive
                              FROM  Users INNER JOIN
                                     People ON Users.PersonID = People.PersonID";
 
