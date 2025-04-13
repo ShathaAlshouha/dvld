@@ -88,7 +88,7 @@ namespace dvld.business
 
         private bool _AddNewPerson()
         {
-            //call DataAccess Layer 
+         
 
             this.PersonID = clsPersonData.AddNewPerson(
                 this.FirstName, this.SecondName, this.ThirdName,
@@ -101,7 +101,7 @@ namespace dvld.business
 
         private bool _UpdatePerson()
         {
-            //call DataAccess Layer 
+           
 
             return clsPersonData.UpdatePerson(
                 this.PersonID, this.FirstName, this.SecondName, this.ThirdName,
@@ -191,12 +191,10 @@ namespace dvld.business
         {
             return clsPersonData.DeletePerson(ID);
         }
-
         public static bool isPersonExist(int ID)
         {
             return clsPersonData.IsPersonExist(ID);
         }
-
         public static bool isPersonExist(string NationlNo)
         {
             return clsPersonData.IsPersonExist(NationlNo);
