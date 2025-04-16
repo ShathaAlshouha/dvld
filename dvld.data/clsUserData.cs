@@ -357,8 +357,6 @@ namespace dvld.data
 
         }
 
-
-
         public static bool IsUserExist(string UserName)
         {
             bool isFound = false;
