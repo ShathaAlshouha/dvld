@@ -12,7 +12,7 @@ namespace dvld.data
     public class clsTestTypeData
     {
         public static bool GetTestTypeInfoByID(int TestTypeID,
-             ref string TestTypeTitle, ref string TestDescription, ref float TestFees)
+                   ref string TestTypeTitle, ref string TestDescription, ref float TestFees)
         {
             bool isFound = false;
 
@@ -62,7 +62,6 @@ namespace dvld.data
 
             return isFound;
         }
-
 
         public static DataTable GetAllTestTypes()
         {
@@ -149,17 +148,17 @@ namespace dvld.data
 
         }
 
-        public static  bool UpdateTestType(int TestTypeID, string Title, string Description, float Fees)
+        public static bool UpdateTestType(int TestTypeID, string Title, string Description, float Fees)
         {
-            bool isUpdated = false;
 
+            int rowsAffected = 0;
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
-            string query = @"Update TestTypes 
-                            Set TestTypeTitle = @TestTypeTitle,
-                                TestTypeDescription = @TestTypeDescription,
+            string query = @"Update  TestTypes  
+                            set TestTypeTitle = @TestTypeTitle,
+                                TestTypeDescription=@TestTypeDescription,
                                 TestTypeFees = @TestTypeFees
-                            where TestTypeID = @TestTypeID;";
+                                where TestTypeID = @TestTypeID";
 
             SqlCommand command = new SqlCommand(query, connection);
 
@@ -171,19 +170,13 @@ namespace dvld.data
             try
             {
                 connection.Open();
+                rowsAffected = command.ExecuteNonQuery();
 
-                int rowsAffected = command.ExecuteNonQuery();
-
-                if (rowsAffected > 0)
-                {
-                    isUpdated = true;
-                }
             }
-
             catch (Exception ex)
             {
                 //Console.WriteLine("Error: " + ex.Message);
-                isUpdated = false;
+                return false;
             }
 
             finally
@@ -191,7 +184,7 @@ namespace dvld.data
                 connection.Close();
             }
 
-            return isUpdated;
+            return (rowsAffected > 0);
         }
 
     }
