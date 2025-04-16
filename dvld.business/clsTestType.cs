@@ -42,7 +42,40 @@ namespace dvld.business
             Mode = enMode.Update;
         }
 
-      
+        private bool _AddNewTestType()
+        {
+            //call DataAccess Layer 
+
+            this.ID = (clsTestType.enTestType)clsTestTypeData.AddNewTestType(this.Title, this.Description, this.Fees);
+
+            return (this.Title != "");
+        }
+
+        private bool _UpdateTestType()
+        {
+            //call DataAccess Layer 
+
+            return clsTestTypeData.UpdateTestType((int)this.ID, this.Title, this.Description, this.Fees);
+        }
+
+        public static clsTestType Find(clsTestType.enTestType TestTypeID)
+        {
+            string Title = "", Description = ""; float Fees = 0;
+
+            if (clsTestTypeData.GetTestTypeInfoByID((int)TestTypeID, ref Title, ref Description, ref Fees))
+
+                return new clsTestType(TestTypeID, Title, Description, Fees);
+            else
+                return null;
+
+        }
+
+        public static DataTable GetAllTestTypes()
+        {
+            return clsTestTypeData.GetAllTestTypes();
+
+        }
+
 
 
     }
