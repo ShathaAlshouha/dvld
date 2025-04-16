@@ -44,7 +44,7 @@ namespace dvld.business
 
         private bool _AddNewTestType()
         {
-            //call DataAccess Layer 
+           
 
             this.ID = (clsTestType.enTestType)clsTestTypeData.AddNewTestType(this.Title, this.Description, this.Fees);
 
@@ -53,7 +53,7 @@ namespace dvld.business
 
         private bool _UpdateTestType()
         {
-            //call DataAccess Layer 
+            
 
             return clsTestTypeData.UpdateTestType((int)this.ID, this.Title, this.Description, this.Fees);
         }
