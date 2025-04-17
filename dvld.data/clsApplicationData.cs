@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace dvld.data
 {
-    internal class clsApplicationData
+    public class clsApplicationData
     {
 
         public static bool GetApplicationInfoByID(int ApplicationID,
