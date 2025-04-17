@@ -11,7 +11,6 @@ namespace dvld.business
 {
     public class clsTestType
     {
-
         public enum enMode { AddNew = 0, Update = 1 };
         public enMode Mode = enMode.AddNew;
         public enum enTestType { VisionTest = 1, WrittenTest = 2, StreetTest = 3 };
@@ -53,7 +52,7 @@ namespace dvld.business
 
         private bool _UpdateTestType()
         {
-            
+     
 
             return clsTestTypeData.UpdateTestType((int)this.ID, this.Title, this.Description, this.Fees);
         }
@@ -95,7 +94,6 @@ namespace dvld.business
                 case enMode.Update:
 
                     return _UpdateTestType();
-
             }
 
             return false;
