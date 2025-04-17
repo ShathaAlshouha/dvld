@@ -146,7 +146,51 @@ namespace dvld.business
             return clsApplicationData.UpdateStatus(ApplicationID, 2);
         }
 
+        public bool SetComplete()
 
+        {
+            return clsApplicationData.UpdateStatus(ApplicationID, 3);
+        }
+
+        public bool Save()
+        {
+            switch (Mode)
+            {
+                case enMode.AddNew:
+                    if (_AddNewApplication())
+                    {
+
+                        Mode = enMode.Update;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                case enMode.Update:
+
+                    return _UpdateApplication();
+
+            }
+
+            return false;
+        }
+
+        public bool Delete()
+        {
+            return clsApplicationData.DeleteApplication(this.ApplicationID);
+        }
+
+        public static bool IsApplicationExist(int ApplicationID)
+        {
+            return clsApplicationData.IsApplicationExist(ApplicationID);
+        }
+
+        public static bool DoesPersonHaveActiveApplication(int PersonID, int ApplicationTypeID)
+        {
+            return clsApplicationData.DoesPersonHaveActiveApplication(PersonID, ApplicationTypeID);
+        }
 
 
 
