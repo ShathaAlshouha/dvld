@@ -59,7 +59,6 @@ namespace dvld.data
         }
 
 
-
         public static DataTable GetAllLocalDrivingLicenseApplications()
         {
 
@@ -103,6 +102,143 @@ namespace dvld.data
             return dt;
 
         }
+
+
+        public static bool GetLocalDrivingLicenseApplicationInfoByApplicationID(
+         int ApplicationID, ref int LocalDrivingLicenseApplicationID,
+         ref int LicenseClassID)
+        {
+            bool isFound = false;
+
+            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
+
+            string query = "SELECT * FROM LocalDrivingLicenseApplications WHERE ApplicationID = @ApplicationID";
+
+            SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
+
+            try
+            {
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    isFound = true;
+
+                    LocalDrivingLicenseApplicationID = (int)reader["LocalDrivingLicenseApplicationID"];
+                    LicenseClassID = (int)reader["LicenseClassID"];
+
+                }
+                else
+                { 
+                    isFound = false;
+                }
+
+                reader.Close();
+
+
+            }
+            catch (Exception ex)
+            {
+                //Console.WriteLine("Error: " + ex.Message);
+                isFound = false;
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return isFound;
+        }
+
+        public static int AddNewLocalDrivingLicenseApplication(
+      int ApplicationID, int LicenseClassID)
+        {
+
+            //this function will return the new person id if succeeded and -1 if not.
+            int LocalDrivingLicenseApplicationID = -1;
+
+            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
+
+            string query = @"INSERT INTO LocalDrivingLicenseApplications ( 
+                            ApplicationID,LicenseClassID)
+                             VALUES (@ApplicationID,@LicenseClassID);
+                             SELECT SCOPE_IDENTITY();";
+
+            SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("ApplicationID", ApplicationID);
+            command.Parameters.AddWithValue("LicenseClassID", LicenseClassID);
+
+            try
+            {
+                connection.Open();
+
+                object result = command.ExecuteScalar();
+
+                if (result != null && int.TryParse(result.ToString(), out int insertedID))
+                {
+                    LocalDrivingLicenseApplicationID = insertedID;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                //Console.WriteLine("Error: " + ex.Message);
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+
+            return LocalDrivingLicenseApplicationID;
+        }
+
+        public static bool UpdateLocalDrivingLicenseApplication(
+                    int LocalDrivingLicenseApplicationID, int ApplicationID, int LicenseClassID)
+        {
+
+            int rowsAffected = 0;
+            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
+
+            string query = @"Update  LocalDrivingLicenseApplications  
+                            set ApplicationID = @ApplicationID,
+                                LicenseClassID = @LicenseClassID
+                            where LocalDrivingLicenseApplicationID=@LocalDrivingLicenseApplicationID";
+
+            SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@LocalDrivingLicenseApplicationID", LocalDrivingLicenseApplicationID);
+            command.Parameters.AddWithValue("ApplicationID", ApplicationID);
+            command.Parameters.AddWithValue("LicenseClassID", LicenseClassID);
+
+
+            try
+            {
+                connection.Open();
+                rowsAffected = command.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+                //Console.WriteLine("Error: " + ex.Message);
+                return false;
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+            return (rowsAffected > 0);
+        }
+
+
 
 
     }
