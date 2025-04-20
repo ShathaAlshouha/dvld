@@ -23,6 +23,8 @@ namespace dvld.business
 
         public int ApplicationID { set; get; }
         public int ApplicantPersonID { set; get; }
+
+        public clsPerson PersonInfo; 
         public string ApplicantFullName
         {
             get
