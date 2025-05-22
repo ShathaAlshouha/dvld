@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace dvld.business
 {
-    internal class clsLicenseClass
+    public class clsLicenseClass
     {
     }
 }
