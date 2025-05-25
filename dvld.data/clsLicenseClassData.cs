@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace dvld.data
 {
-    internal class clsLicenseClassData
+    public class clsLicenseClassData
     {
 
         public static bool GetLicenseClassInfoByID(int LicenseClassID,

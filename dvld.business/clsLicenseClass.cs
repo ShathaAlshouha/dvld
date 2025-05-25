@@ -1,6 +1,9 @@
-﻿using System;
+﻿using dvld.data;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -47,8 +50,55 @@ namespace dvld.business
             Mode = enMode.Update;
         }
 
+        public DataTable GettAllLicenseClass()
+        {
+           return clsLicenseClassData.GetAllLicenseClasses();
+        }
 
+        public bool _AddLicenseClass()
+        {
+          clsLicenseClass licenseClass = new clsLicenseClass();
 
+            licenseClass.LicenseClassID = clsLicenseClassData.AddNewLicenseClass(this.ClassName,this.ClassDescription,
+                this.MinimumAllowedAge, this.DefaultValidityLength, this.ClassFees);
+            return (licenseClass.LicenseClassID != -1); 
+
+        }
+ 
+        public bool _UpdateLicenseClass()
+        {
+            return clsLicenseClassData.UpdateLicenseClass(this.LicenseClassID, this.ClassName, this.ClassDescription,
+                this.MinimumAllowedAge, this.DefaultValidityLength, this.ClassFees);
+        }
+
+        public static clsLicenseClass Find(int LicenseClassID)
+        {
+            string ClassName = ""; string ClassDescription = "";
+            byte MinimumAllowedAge = 18; byte DefaultValidityLength = 10; float ClassFees = 0;
+
+            if (clsLicenseClassData.GetLicenseClassInfoByID(LicenseClassID, ref ClassName, ref ClassDescription,
+                    ref MinimumAllowedAge, ref DefaultValidityLength, ref ClassFees))
+
+                return new clsLicenseClass(LicenseClassID, ClassName, ClassDescription,
+                    MinimumAllowedAge, DefaultValidityLength, ClassFees);
+            else
+                return null;
+
+        }
+        public static clsLicenseClass Find(string ClassName)
+        {
+            int LicenseClassID = -1; string ClassDescription = "";
+            byte MinimumAllowedAge = 18; byte DefaultValidityLength = 10; float ClassFees = 0;
+
+            if (clsLicenseClassData.GetLicenseClassInfoByClassName(ClassName, ref LicenseClassID, ref ClassDescription,
+                    ref MinimumAllowedAge, ref DefaultValidityLength, ref ClassFees))
+
+                return new clsLicenseClass(LicenseClassID, ClassName, ClassDescription,
+                    MinimumAllowedAge, DefaultValidityLength, ClassFees);
+            else
+                return null;
+
+        }
 
 
     }
