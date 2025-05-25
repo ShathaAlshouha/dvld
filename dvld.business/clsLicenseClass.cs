@@ -11,8 +11,6 @@ namespace dvld.business
 {
     public class clsLicenseClass
     {
-
-
         public enum enMode { AddNew = 0, Update = 1 };
         public enMode Mode = enMode.AddNew;
 
@@ -37,8 +35,10 @@ namespace dvld.business
 
         }
 
-        private clsLicenseClass(int LicenseClassID, string ClassName, string ClassDescription,
+        public clsLicenseClass(int LicenseClassID, string ClassName,
+            string ClassDescription,
             byte MinimumAllowedAge, byte DefaultValidityLength, float ClassFees)
+
         {
             this.LicenseClassID = LicenseClassID;
             this.ClassName = ClassName;
@@ -46,27 +46,24 @@ namespace dvld.business
             this.MinimumAllowedAge = MinimumAllowedAge;
             this.DefaultValidityLength = DefaultValidityLength;
             this.ClassFees = ClassFees;
-
             Mode = enMode.Update;
         }
 
-        public DataTable GettAllLicenseClass()
+        private bool _AddNewLicenseClass()
         {
-           return clsLicenseClassData.GetAllLicenseClasses();
-        }
+            //call DataAccess Layer 
 
-        public bool _AddLicenseClass()
-        {
-          clsLicenseClass licenseClass = new clsLicenseClass();
-
-            licenseClass.LicenseClassID = clsLicenseClassData.AddNewLicenseClass(this.ClassName,this.ClassDescription,
+            this.LicenseClassID = clsLicenseClassData.AddNewLicenseClass(this.ClassName, this.ClassDescription,
                 this.MinimumAllowedAge, this.DefaultValidityLength, this.ClassFees);
-            return (licenseClass.LicenseClassID != -1); 
 
+
+            return (this.LicenseClassID != -1);
         }
- 
-        public bool _UpdateLicenseClass()
+
+        private bool _UpdateLicenseClass()
         {
+            //call DataAccess Layer 
+
             return clsLicenseClassData.UpdateLicenseClass(this.LicenseClassID, this.ClassName, this.ClassDescription,
                 this.MinimumAllowedAge, this.DefaultValidityLength, this.ClassFees);
         }
@@ -85,6 +82,7 @@ namespace dvld.business
                 return null;
 
         }
+
         public static clsLicenseClass Find(string ClassName)
         {
             int LicenseClassID = -1; string ClassDescription = "";
@@ -98,6 +96,37 @@ namespace dvld.business
             else
                 return null;
 
+        }
+
+        public static DataTable GetAllLicenseClasses()
+        {
+            return clsLicenseClassData.GetAllLicenseClasses();
+
+        }
+
+        public bool Save()
+        {
+            switch (Mode)
+            {
+                case enMode.AddNew:
+                    if (_AddNewLicenseClass())
+                    {
+
+                        Mode = enMode.Update;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                case enMode.Update:
+
+                    return _UpdateLicenseClass();
+
+            }
+
+            return false;
         }
 
 
