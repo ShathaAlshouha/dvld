@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -86,7 +87,7 @@ namespace dvld.data
 
                 if (reader.Read())
                 {
-
+                    // The record was found
                     isFound = true;
                     LicenseClassID = (int)reader["LicenseClassID"];
                     ClassDescription = (string)reader["ClassDescription"];
@@ -97,6 +98,7 @@ namespace dvld.data
                 }
                 else
                 {
+                    // The record was not found
                     isFound = false;
                 }
 
@@ -106,7 +108,7 @@ namespace dvld.data
             }
             catch (Exception ex)
             {
-
+                //Console.WriteLine("Error: " + ex.Message);
                 isFound = false;
             }
             finally
@@ -117,8 +119,50 @@ namespace dvld.data
             return isFound;
         }
 
+
+
+        public static DataTable GetAllLicenseClasses()
+        {
+
+            DataTable dt = new DataTable();
+            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
+
+            string query = "SELECT * FROM LicenseClasses order by ClassName";
+
+            SqlCommand command = new SqlCommand(query, connection);
+
+            try
+            {
+                connection.Open();
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.HasRows)
+
+                {
+                    dt.Load(reader);
+                }
+
+                reader.Close();
+
+
+            }
+
+            catch (Exception ex)
+            {
+                // Console.WriteLine("Error: " + ex.Message);
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return dt;
+
+        }
+
         public static int AddNewLicenseClass(string ClassName, string ClassDescription,
-           byte MinimumAllowedAge, byte DefaultValidityLength, float ClassFees)
+            byte MinimumAllowedAge, byte DefaultValidityLength, float ClassFees)
         {
             int LicenseClassID = -1;
 
@@ -174,10 +218,9 @@ namespace dvld.data
 
         }
 
-
         public static bool UpdateLicenseClass(int LicenseClassID, string ClassName,
-             string ClassDescription,
-             byte MinimumAllowedAge, byte DefaultValidityLength, float ClassFees)
+            string ClassDescription,
+            byte MinimumAllowedAge, byte DefaultValidityLength, float ClassFees)
         {
 
             int rowsAffected = 0;
