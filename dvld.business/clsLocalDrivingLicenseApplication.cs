@@ -23,7 +23,6 @@ namespace dvld.business
                 return base.PersonInfo.FullName;
             }
         }
-
         public clsLocalDrivingLicenseApplication()
         {
             this.ApplicationID = 0; 
@@ -35,7 +34,6 @@ namespace dvld.business
             DateTime ApplicationDate, int ApplicationTypeID,
              enApplicationStatus ApplicationStatus, DateTime LastStatusDate,
              float PaidFees, int CreatedByUserID, int LicenseClassID)
-
         {
             this.LocalDrivingLicenseApplicationID = LocalDrivingLicenseApplicationID; ;
             this.ApplicationID = ApplicationID;
@@ -51,81 +49,7 @@ namespace dvld.business
             Mode = enMode.Update;
         }
 
-
-        private bool _AddNewLocalDrivingLicenseApplication()
-        {
-            this.LocalDrivingLicenseApplicationID = clsLocalDrivingLicenseApplicationData.AddNewLocalDrivingLicenseApplication
-                (
-                this.ApplicationID, this.LicenseClassID);
-
-            return (this.LocalDrivingLicenseApplicationID != -1);
-        }
-        private bool _UpdateLocalDrivingLicenseApplication()
-        {
-
-            return clsLocalDrivingLicenseApplicationData.UpdateLocalDrivingLicenseApplication
-                (
-                this.LocalDrivingLicenseApplicationID, this.ApplicationID, this.LicenseClassID);
-
-        }
-
-        public static clsLocalDrivingLicenseApplication FindByLocalDrivingAppLicenseID(int LocalDrivingLicenseApplicationID)
-        {
-           
-            int ApplicationID = -1, LicenseClassID = -1;
-
-            bool IsFound = clsLocalDrivingLicenseApplicationData.GetLocalDrivingLicenseApplicationInfoByID
-                (LocalDrivingLicenseApplicationID, ref ApplicationID, ref LicenseClassID);
-
-
-            if (IsFound)
-            {
-                //now we find the base application
-                clsApplication Application = clsApplication.FindBaseApplication(ApplicationID);
-
-                //we return new object of that person with the right data
-                return new clsLocalDrivingLicenseApplication(
-                    LocalDrivingLicenseApplicationID, Application.ApplicationID,
-                    Application.ApplicantPersonID,
-                                     Application.ApplicationDate, Application.ApplicationTypeID,
-                                    (enApplicationStatus)Application.ApplicationStatus, Application.LastStatusDate,
-                                     Application.PaidFees, Application.CreatedByUserID, LicenseClassID);
-            }
-            else
-                return null;
-
-
-        }
-
-        public static clsLocalDrivingLicenseApplication FindByApplicationID(int ApplicationID)
-        {
-            // 
-            int LocalDrivingLicenseApplicationID = -1, LicenseClassID = -1;
-
-            bool IsFound = clsLocalDrivingLicenseApplicationData.GetLocalDrivingLicenseApplicationInfoByApplicationID
-                (ApplicationID, ref LocalDrivingLicenseApplicationID, ref LicenseClassID);
-
-
-            if (IsFound)
-            {
-
-                clsApplication Application = clsApplication.FindBaseApplication(ApplicationID);
-
-       
-                return new clsLocalDrivingLicenseApplication(
-                    LocalDrivingLicenseApplicationID, Application.ApplicationID,
-                    Application.ApplicantPersonID,
-                                     Application.ApplicationDate, Application.ApplicationTypeID,
-                                    (enApplicationStatus)Application.ApplicationStatus, Application.LastStatusDate,
-                                     Application.PaidFees, Application.CreatedByUserID, LicenseClassID);
-            }
-            else
-                return null;
-
-
-        }
-
-
+        
 
     }
 }

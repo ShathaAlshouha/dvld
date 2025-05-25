@@ -46,7 +46,6 @@ namespace dvld.business
         }
 
         public clsPerson()
-
         {
             this.PersonID = -1;
             this.FirstName = "";
@@ -67,7 +66,6 @@ namespace dvld.business
             string LastName, string NationalNo, DateTime DateOfBirth, short Gendor,
              string Address, string Phone, string Email,
             int NationalityCountryID, string ImagePath)
-
         {
             this.PersonID = PersonID;
             this.FirstName = FirstName;

@@ -86,7 +86,7 @@ namespace dvld.data
 
                 if (reader.Read())
                 {
-                   
+
                     isFound = true;
                     LicenseClassID = (int)reader["LicenseClassID"];
                     ClassDescription = (string)reader["ClassDescription"];
@@ -106,7 +106,7 @@ namespace dvld.data
             }
             catch (Exception ex)
             {
-              
+
                 isFound = false;
             }
             finally
@@ -117,7 +117,62 @@ namespace dvld.data
             return isFound;
         }
 
+        public static int AddNewLicenseClass(string ClassName, string ClassDescription,
+           byte MinimumAllowedAge, byte DefaultValidityLength, float ClassFees)
+        {
+            int LicenseClassID = -1;
 
+            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
+
+            string query = @"Insert Into LicenseClasses 
+           (
+            ClassName,ClassDescription,MinimumAllowedAge, 
+            DefaultValidityLength,ClassFees)
+                            Values ( 
+            @ClassName,@ClassDescription,@MinimumAllowedAge, 
+            @DefaultValidityLength,@ClassFees)
+                            where LicenseClassID = @LicenseClassID;
+                            SELECT SCOPE_IDENTITY();";
+
+
+
+            SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@ClassName", ClassName);
+            command.Parameters.AddWithValue("@ClassDescription", ClassDescription);
+            command.Parameters.AddWithValue("@MinimumAllowedAge", MinimumAllowedAge);
+            command.Parameters.AddWithValue("@DefaultValidityLength", DefaultValidityLength);
+            command.Parameters.AddWithValue("@ClassFees", ClassFees);
+
+
+
+            try
+            {
+                connection.Open();
+
+                object result = command.ExecuteScalar();
+
+                if (result != null && int.TryParse(result.ToString(), out int insertedID))
+                {
+                    LicenseClassID = insertedID;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                //Console.WriteLine("Error: " + ex.Message);
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+
+            return LicenseClassID;
+
+        }
 
     }
 }
