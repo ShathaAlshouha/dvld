@@ -49,7 +49,20 @@ namespace dvld.business
             Mode = enMode.Update;
         }
 
-        
+
+
+        public bool _AddNewLocalDrivingLisencsApplication()
+        {
+
+            int ID = clsLocalDrivingLicenseApplicationData.AddNewLocalDrivingLicenseApplication(this.ApplicationID, this.LicenseClassID);
+            return (ID != -1);
+        }
+
+        public bool _UpdateLocalDrivingLisencseApplication()
+        {
+
+            return clsLocalDrivingLicenseApplicationData.UpdateLocalDrivingLicenseApplication(this.LocalDrivingLicenseApplicationID, this.ApplicationID, this.LicenseClassID));
+        }
 
     }
 }
