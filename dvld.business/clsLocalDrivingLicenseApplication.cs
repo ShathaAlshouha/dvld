@@ -9,31 +9,37 @@ namespace dvld.business
 {
     public class clsLocalDrivingLicenseApplication:clsApplication
     {
-        enum enMode { AddNew = 0, Update = 1 }
-        enMode Mode = enMode.AddNew; 
-        int LocalDrivingLicenseApplicationID { get; set; } 
-        int ApplicationID {  get; set; }
-        int LicenseClassID { get; set; }
-        clsLicenseClass LicenseClassInfo   { get; set; }
-        clsApplication ApplivationInfo { get; set; }
-        string PersonFullName
+        public enum enMode { AddNew = 0, Update = 1 };
+        public enMode Mode = enMode.AddNew;
+
+        public int LocalDrivingLicenseApplicationID { set; get; }
+        public int LicenseClassID { set; get; }
+        public clsLicenseClass LicenseClassInfo;
+        public string PersonFullName
         {
             get
             {
-                return base.PersonInfo.FullName;
+                return clsPerson.Find(ApplicantPersonID).FullName;
             }
+
         }
+
         public clsLocalDrivingLicenseApplication()
+
         {
-            this.ApplicationID = 0; 
-            this.LicenseClassID = 0;
-            this.LocalDrivingLicenseApplicationID = 0;
-            Mode = enMode.AddNew; 
+            this.LocalDrivingLicenseApplicationID = -1;
+            this.LicenseClassID = -1;
+
+
+            Mode = enMode.AddNew;
+
         }
+
         private clsLocalDrivingLicenseApplication(int LocalDrivingLicenseApplicationID, int ApplicationID, int ApplicantPersonID,
             DateTime ApplicationDate, int ApplicationTypeID,
              enApplicationStatus ApplicationStatus, DateTime LastStatusDate,
              float PaidFees, int CreatedByUserID, int LicenseClassID)
+
         {
             this.LocalDrivingLicenseApplicationID = LocalDrivingLicenseApplicationID; ;
             this.ApplicationID = ApplicationID;
@@ -45,24 +51,58 @@ namespace dvld.business
             this.PaidFees = PaidFees;
             this.CreatedByUserID = CreatedByUserID;
             this.LicenseClassID = LicenseClassID;
-            this.LicenseClassInfo = new clsLicenseClass(); 
+            this.LicenseClassInfo = clsLicenseClass.Find(LicenseClassID);
             Mode = enMode.Update;
         }
 
-
-
-        public bool _AddNewLocalDrivingLisencsApplication()
+        private bool _AddNewLocalDrivingLicenseApplication()
         {
+     
+            this.LocalDrivingLicenseApplicationID = clsLocalDrivingLicenseApplicationData.AddNewLocalDrivingLicenseApplication
+                (
+                this.ApplicationID, this.LicenseClassID);
 
-            int ID = clsLocalDrivingLicenseApplicationData.AddNewLocalDrivingLicenseApplication(this.ApplicationID, this.LicenseClassID);
-            return (ID != -1);
+            return (this.LocalDrivingLicenseApplicationID != -1);
         }
 
-        public bool _UpdateLocalDrivingLisencseApplication()
+        private bool _UpdateLocalDrivingLicenseApplication()
         {
+     
 
-            return clsLocalDrivingLicenseApplicationData.UpdateLocalDrivingLicenseApplication(this.LocalDrivingLicenseApplicationID, this.ApplicationID, this.LicenseClassID));
+            return clsLocalDrivingLicenseApplicationData.UpdateLocalDrivingLicenseApplication
+                (
+                this.LocalDrivingLicenseApplicationID, this.ApplicationID, this.LicenseClassID);
+
         }
+
+        public static clsLocalDrivingLicenseApplication FindByLocalDrivingAppLicenseID(int LocalDrivingLicenseApplicationID)
+        {
+         
+            int ApplicationID = -1, LicenseClassID = -1;
+
+            bool IsFound = clsLocalDrivingLicenseApplicationData.GetLocalDrivingLicenseApplicationInfoByID
+                (LocalDrivingLicenseApplicationID, ref ApplicationID, ref LicenseClassID);
+
+
+            if (IsFound)
+            {
+                
+                clsApplication Application = clsApplication.FindBaseApplication(ApplicationID);
+
+          
+                return new clsLocalDrivingLicenseApplication(
+                    LocalDrivingLicenseApplicationID, Application.ApplicationID,
+                    Application.ApplicantPersonID,
+                                     Application.ApplicationDate, Application.ApplicationTypeID,
+                                    (enApplicationStatus)Application.ApplicationStatus, Application.LastStatusDate,
+                                     Application.PaidFees, Application.CreatedByUserID, LicenseClassID);
+            }
+            else
+                return null;
+
+
+        }
+
 
     }
 }
