@@ -10,7 +10,6 @@ namespace dvld.data
 {
     public class clsTestAppointmentData
     {
-
         public static bool GetTestAppointmentInfoByID(int TestAppointmentID,
             ref int TestTypeID, ref int LocalDrivingLicenseApplicationID,
             ref DateTime AppointmentDate, ref float PaidFees, ref int CreatedByUserID, ref bool IsLocked, ref int RetakeTestApplicationID)
@@ -71,8 +70,7 @@ namespace dvld.data
             return isFound;
         }
 
-
-    public static bool GetLastTestAppointment(
+        public static bool GetLastTestAppointment(
              int LocalDrivingLicenseApplicationID, int TestTypeID,
             ref int TestAppointmentID, ref DateTime AppointmentDate,
             ref float PaidFees, ref int CreatedByUserID, ref bool IsLocked, ref int RetakeTestApplicationID)
@@ -81,9 +79,9 @@ namespace dvld.data
 
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
-            string query = @"SELECT  top 1 *
-                FROM  TestAppointments
-                WHERE (TestTypeID = @TestTypeID) 
+            string query = @"SELECT       top 1 *
+                FROM            TestAppointments
+                WHERE        (TestTypeID = @TestTypeID) 
                 AND (LocalDrivingLicenseApplicationID = @LocalDrivingLicenseApplicationID) 
                 order by TestAppointmentID Desc";
 
@@ -139,7 +137,6 @@ namespace dvld.data
 
             return isFound;
         }
-
 
         public static DataTable GetAllTestAppointments()
         {
@@ -233,10 +230,9 @@ namespace dvld.data
 
         }
 
-
         public static int AddNewTestAppointment(
-                   int TestTypeID, int LocalDrivingLicenseApplicationID,
-                   DateTime AppointmentDate, float PaidFees, int CreatedByUserID, int RetakeTestApplicationID)
+             int TestTypeID, int LocalDrivingLicenseApplicationID,
+             DateTime AppointmentDate, float PaidFees, int CreatedByUserID, int RetakeTestApplicationID)
         {
             int TestAppointmentID = -1;
 
@@ -262,6 +258,10 @@ namespace dvld.data
             else
                 command.Parameters.AddWithValue("@RetakeTestApplicationID", RetakeTestApplicationID);
 
+
+
+
+
             try
             {
                 connection.Open();
@@ -285,13 +285,14 @@ namespace dvld.data
                 connection.Close();
             }
 
+
             return TestAppointmentID;
 
         }
 
         public static bool UpdateTestAppointment(int TestAppointmentID, int TestTypeID, int LocalDrivingLicenseApplicationID,
-               DateTime AppointmentDate, float PaidFees,
-               int CreatedByUserID, bool IsLocked, int RetakeTestApplicationID)
+             DateTime AppointmentDate, float PaidFees,
+             int CreatedByUserID, bool IsLocked, int RetakeTestApplicationID)
         {
 
             int rowsAffected = 0;
@@ -323,6 +324,10 @@ namespace dvld.data
             else
                 command.Parameters.AddWithValue("@RetakeTestApplicationID", RetakeTestApplicationID);
 
+
+
+
+
             try
             {
                 connection.Open();
@@ -341,6 +346,48 @@ namespace dvld.data
             }
 
             return (rowsAffected > 0);
+        }
+
+
+        public static int GetTestID(int TestAppointmentID)
+        {
+            int TestID = -1;
+            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
+
+            string query = @"select TestID from Tests where TestAppointmentID=@TestAppointmentID;";
+
+            SqlCommand command = new SqlCommand(query, connection);
+
+
+            command.Parameters.AddWithValue("@TestAppointmentID", TestAppointmentID);
+
+
+            try
+            {
+                connection.Open();
+
+                object result = command.ExecuteScalar();
+
+                if (result != null && int.TryParse(result.ToString(), out int insertedID))
+                {
+                    TestID = insertedID;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                //Console.WriteLine("Error: " + ex.Message);
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+
+            return TestID;
+
         }
 
     }
