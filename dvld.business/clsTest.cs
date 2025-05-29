@@ -48,33 +48,103 @@ namespace dvld.business
             Mode = enMode.Update;
         }
 
+        private bool _AddNewTest()
+        {
+     
+
+            this.TestID = clsTestData.AddNewTest(this.TestAppointmentID,
+                this.TestResult, this.Notes, this.CreatedByUserID);
+
+
+            return (this.TestID != -1);
+        }
+
+        private bool _UpdateTest()
+        {
+   
+            return clsTestData.UpdateTest(this.TestID, this.TestAppointmentID,
+                this.TestResult, this.Notes, this.CreatedByUserID);
+        }
 
         public static clsTest Find(int TestID)
         {
             int TestAppointmentID = -1;
             bool TestResult = false; string Notes = ""; int CreatedByUserID = -1;
 
-            if (clsTestData.GetTestInfoByID(TestID, ref TestAppointmentID, ref TestResult, ref Notes, ref CreatedByUserID))
+            if (clsTestData.GetTestInfoByID(TestID,
+            ref TestAppointmentID, ref TestResult,
+            ref Notes, ref CreatedByUserID))
 
-                return new clsTest(TestID,  TestAppointmentID, TestResult,  Notes, CreatedByUserID);
+                return new clsTest(TestID,
+                        TestAppointmentID, TestResult,
+                        Notes, CreatedByUserID);
             else
                 return null;
 
         }
 
-        private bool _AddNewTest()
+        public static clsTest FindLastTestPerPersonAndLicenseClass
+            (int PersonID, int LicenseClassID, clsTestType.enTestType TestTypeID)
         {
-            this.TestID = clsTestData.AddNewTest(this.TestAppointmentID, this.TestResult, this.Notes, this.CreatedByUserID);
-            return this.TestID != -1;
+            int TestID = -1;
+            int TestAppointmentID = -1;
+            bool TestResult = false; string Notes = ""; int CreatedByUserID = -1;
+
+            if (clsTestData.GetLastTestByPersonAndTestTypeAndLicenseClass
+                (PersonID, LicenseClassID, (int)TestTypeID, ref TestID,
+            ref TestAppointmentID, ref TestResult,
+            ref Notes, ref CreatedByUserID))
+
+                return new clsTest(TestID,
+                        TestAppointmentID, TestResult,
+                        Notes, CreatedByUserID);
+            else
+                return null;
+
         }
-        private bool _UpdateTest()
-        {
-           return clsTestData.UpdateTest(this.TestID, this.TestAppointmentID, this.TestResult, this.Notes, this.CreatedByUserID);
-        }
-        public DataTable GetAllTests()
+
+        public static DataTable GetAllTests()
         {
             return clsTestData.GetAllTests();
+
         }
+
+        public bool Save()
+        {
+            switch (Mode)
+            {
+                case enMode.AddNew:
+                    if (_AddNewTest())
+                    {
+
+                        Mode = enMode.Update;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                case enMode.Update:
+
+                    return _UpdateTest();
+
+            }
+
+            return false;
+        }
+
+        public static byte GetPassedTestCount(int LocalDrivingLicenseApplicationID)
+        {
+            return clsTestData.GetPassedTestCount(LocalDrivingLicenseApplicationID);
+        }
+
+        public static bool PassedAllTests(int LocalDrivingLicenseApplicationID)
+        {
+            
+            return GetPassedTestCount(LocalDrivingLicenseApplicationID) == 3;
+        }
+
 
 
     }
