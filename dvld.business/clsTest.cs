@@ -140,8 +140,7 @@ namespace dvld.business
         }
 
         public static bool PassedAllTests(int LocalDrivingLicenseApplicationID)
-        {
-            
+        {        
             return GetPassedTestCount(LocalDrivingLicenseApplicationID) == 3;
         }
 
