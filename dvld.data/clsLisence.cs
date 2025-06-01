@@ -206,11 +206,9 @@ namespace dvld.data
                     LicenseID = insertedID;
                 }
             }
-
             catch (Exception ex)
             {
                 //Console.WriteLine("Error: " + ex.Message);
-
             }
 
             finally
@@ -220,7 +218,66 @@ namespace dvld.data
 
             return LicenseID;
 
-        }           
+        }
+
+        public static bool UpdateLicense(int LicenseID, int ApplicationID, int DriverID, int LicenseClass,
+            DateTime IssueDate, DateTime ExpirationDate, string Notes,
+            float PaidFees, bool IsActive, byte IssueReason, int CreatedByUserID)
+        {
+
+            int rowsAffected = 0;
+            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
+
+            string query = @"UPDATE Licenses
+                           SET ApplicationID=@ApplicationID, DriverID = @DriverID,
+                              LicenseClass = @LicenseClass,
+                              IssueDate = @IssueDate,
+                              ExpirationDate = @ExpirationDate,
+                              Notes = @Notes,
+                              PaidFees = @PaidFees,
+                              IsActive = @IsActive,IssueReason=@IssueReason,
+                              CreatedByUserID = @CreatedByUserID
+                         WHERE LicenseID=@LicenseID";
+
+            SqlCommand command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@LicenseID", LicenseID);
+            command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
+            command.Parameters.AddWithValue("@DriverID", DriverID);
+            command.Parameters.AddWithValue("@LicenseClass", LicenseClass);
+            command.Parameters.AddWithValue("@IssueDate", IssueDate);
+            command.Parameters.AddWithValue("@ExpirationDate", ExpirationDate);
+
+            if (Notes == "")
+                command.Parameters.AddWithValue("@Notes", DBNull.Value);
+            else
+                command.Parameters.AddWithValue("@Notes", Notes);
+
+            command.Parameters.AddWithValue("@PaidFees", PaidFees);
+            command.Parameters.AddWithValue("@IsActive", IsActive);
+            command.Parameters.AddWithValue("@IssueReason", IssueReason);
+            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
+
+            try
+            {
+                connection.Open();
+                rowsAffected = command.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+                //Console.WriteLine("Error: " + ex.Message);
+                return false;
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+            return (rowsAffected > 0);
+        }
+
 
     }
 }
