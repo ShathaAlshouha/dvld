@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DTOs;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -10,10 +11,7 @@ namespace dvld.data
 {
     public class clsPersonData
     {
-        public static bool GetPersonInfoByID(int PersonID, ref string FirstName, ref string SecondName,
-         ref string ThirdName, ref string LastName, ref string NationalNo, ref DateTime DateOfBirth,
-          ref short Gendor, ref string Address, ref string Phone, ref string Email,
-          ref int NationalityCountryID, ref string ImagePath)
+        public static bool GetPersonInfoByID(int PersonID , ref PersonDTO person)
         {
             bool isFound = false;
 
@@ -32,56 +30,54 @@ namespace dvld.data
 
                 if (reader.Read())
                 {
-                    // The record was found
+                   
                     isFound = true;
+                    person.PersonID = (int)reader["PersonID"];
+                    person.FirstName = (string)reader["FirstName"];
+                    person.SecondName = (string)reader["SecondName"];
 
-                    FirstName = (string)reader["FirstName"];
-                    SecondName = (string)reader["SecondName"];
-
-                    //ThirdName: allows null in database so we should handle null
+                   
                     if (reader["ThirdName"] != DBNull.Value)
                     {
-                        ThirdName = (string)reader["ThirdName"];
+                        person.ThirdName = (string)reader["ThirdName"];
                     }
                     else
                     {
-                        ThirdName = "";
+                        person.ThirdName = "";
                     }
 
-                    LastName = (string)reader["LastName"];
-                    NationalNo = (string)reader["NationalNo"];
-                    DateOfBirth = (DateTime)reader["DateOfBirth"];
-                    Gendor = (byte)reader["Gendor"];
-                    Address = (string)reader["Address"];
-                    Phone = (string)reader["Phone"];
+                    person.LastName = (string)reader["LastName"];
+                   person. NationalNo = (string)reader["NationalNo"];
+                   person. DateOfBirth = (DateTime)reader["DateOfBirth"];
+                   person. Gendor = (byte)reader["Gendor"];
+                   person. Address = (string)reader["Address"];
+                   person. Phone = (string)reader["Phone"];
 
-
-                    //Email: allows null in database so we should handle null
                     if (reader["Email"] != DBNull.Value)
                     {
-                        Email = (string)reader["Email"];
+                        person.Email = (string)reader["Email"];
                     }
                     else
                     {
-                        Email = "";
+                        person.Email = "";
                     }
 
-                    NationalityCountryID = (int)reader["NationalityCountryID"];
+                    person.NationalityCountryID = (int)reader["NationalityCountryID"];
 
-                    //ImagePath: allows null in database so we should handle null
+                 
                     if (reader["ImagePath"] != DBNull.Value)
                     {
-                        ImagePath = (string)reader["ImagePath"];
+                        person.ImagePath = (string)reader["ImagePath"];
                     }
                     else
                     {
-                        ImagePath = "";
+                        person.ImagePath = "";
                     }
 
                 }
                 else
                 {
-                    // The record was not found
+                   
                     isFound = false;
                 }
 
@@ -102,10 +98,7 @@ namespace dvld.data
         }
 
 
-        public static bool GetPersonInfoByNationalNo(string NationalNo, ref int PersonID, ref string FirstName, ref string SecondName,
-        ref string ThirdName, ref string LastName, ref DateTime DateOfBirth,
-         ref short Gendor, ref string Address, ref string Phone, ref string Email,
-         ref int NationalityCountryID, ref string ImagePath)
+        public static bool GetPersonInfoByNationalNo(string NationalNo, ref PersonDTO person)
         {
             bool isFound = false;
 
@@ -124,49 +117,48 @@ namespace dvld.data
 
                 if (reader.Read())
                 {
-                    // The record was found
+                   
                     isFound = true;
 
-                    PersonID = (int)reader["PersonID"];
-                    FirstName = (string)reader["FirstName"];
-                    SecondName = (string)reader["SecondName"];
+                    person.PersonID = (int)reader["PersonID"];
+                    person.FirstName = (string)reader["FirstName"];
+                    person.SecondName = (string)reader["SecondName"];
 
-                    //ThirdName: allows null in database so we should handle null
+                   
                     if (reader["ThirdName"] != DBNull.Value)
                     {
-                        ThirdName = (string)reader["ThirdName"];
+                        person.ThirdName = (string)reader["ThirdName"];
                     }
                     else
                     {
-                        ThirdName = "";
+                        person.ThirdName = "";
                     }
 
-                    LastName = (string)reader["LastName"];
-                    DateOfBirth = (DateTime)reader["DateOfBirth"];
-                    Gendor = (byte)reader["Gendor"];
-                    Address = (string)reader["Address"];
-                    Phone = (string)reader["Phone"];
+                    person.LastName = (string)reader["LastName"];
+                    person.DateOfBirth = (DateTime)reader["DateOfBirth"];
+                    person.Gendor = (byte)reader["Gendor"];
+                    person.Address = (string)reader["Address"];
+                    person.Phone = (string)reader["Phone"];
 
-                    //Email: allows null in database so we should handle null
+          
                     if (reader["Email"] != DBNull.Value)
                     {
-                        Email = (string)reader["Email"];
+                        person.Email = (string)reader["Email"];
                     }
                     else
                     {
-                        Email = "";
+                        person.Email = "";
                     }
 
-                    NationalityCountryID = (int)reader["NationalityCountryID"];
+                    person.NationalityCountryID = (int)reader["NationalityCountryID"];
 
-                    //ImagePath: allows null in database so we should handle null
                     if (reader["ImagePath"] != DBNull.Value)
                     {
-                        ImagePath = (string)reader["ImagePath"];
+                        person.ImagePath = (string)reader["ImagePath"];
                     }
                     else
                     {
-                        ImagePath = "";
+                        person.ImagePath = "";
                     }
 
                 }
@@ -182,7 +174,7 @@ namespace dvld.data
             }
             catch (Exception ex)
             {
-                //Console.WriteLine("Error: " + ex.Message);
+              
                 isFound = false;
             }
             finally
@@ -200,7 +192,7 @@ namespace dvld.data
            short Gendor, string Address, string Phone, string Email,
             int NationalityCountryID, string ImagePath)
         {
-            //this function will return the new person id if succeeded and -1 if not.
+          
             int PersonID = -1;
 
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);

@@ -1,4 +1,5 @@
-﻿using dvld.data;
+﻿using DTOs;
+using dvld.data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,7 +17,7 @@ namespace dvld.business
 
         public enum enMode { AddNew = 0, Update = 1 };
         public enMode Mode = enMode.AddNew;
-
+       
         public int PersonID { set; get; }
         public string FirstName { set; get; }
         public string SecondName { set; get; }
@@ -108,49 +109,38 @@ namespace dvld.business
                   this.NationalityCountryID, this.ImagePath);
         }
 
-        public static clsPerson Find(int PersonID)
+        public static clsPerson Find(int personID)
         {
+      
+            PersonDTO person = new PersonDTO();
 
-            string FirstName = "", SecondName = "", ThirdName = "", LastName = "", NationalNo = "", Email = "", Phone = "", Address = "", ImagePath = "";
-            DateTime DateOfBirth = DateTime.Now;
-            int NationalityCountryID = -1;
-            short Gendor = 0;
 
-            bool IsFound = clsPersonData.GetPersonInfoByID
-                                (
-                                    PersonID, ref FirstName, ref SecondName,
-                                    ref ThirdName, ref LastName, ref NationalNo, ref DateOfBirth,
-                                    ref Gendor, ref Address, ref Phone, ref Email,
-                                    ref NationalityCountryID, ref ImagePath
-                                );
+            bool isFound = clsPersonData.GetPersonInfoByID(personID, ref person);
 
-            if (IsFound)
-                //we return new object of that person with the right data
-                return new clsPerson(PersonID, FirstName, SecondName, ThirdName, LastName,
-                          NationalNo, DateOfBirth, Gendor, Address, Phone, Email, NationalityCountryID, ImagePath);
+            if (isFound)
+            {
+           
+                return new clsPerson(person.PersonID, person.FirstName, person.SecondName, person.ThirdName,
+                    person.LastName, person.NationalNo, person.DateOfBirth, person.Gendor,  person.Address, person.Phone,
+                    person.Email, person.NationalityCountryID, person.ImagePath );
+            }
             else
+            {
                 return null;
+            }
         }
+
 
         public static clsPerson Find(string NationalNo)
         {
-            string FirstName = "", SecondName = "", ThirdName = "", LastName = "", Email = "", Phone = "", Address = "", ImagePath = "";
-            DateTime DateOfBirth = DateTime.Now;
-            int PersonID = -1, NationalityCountryID = -1;
-            short Gendor = 0;
+           var person = new PersonDTO();
 
-            bool IsFound = clsPersonData.GetPersonInfoByNationalNo
-                                (
-                                    NationalNo, ref PersonID, ref FirstName, ref SecondName,
-                                    ref ThirdName, ref LastName, ref DateOfBirth,
-                                    ref Gendor, ref Address, ref Phone, ref Email,
-                                    ref NationalityCountryID, ref ImagePath
-                                );
+            bool IsFound = clsPersonData.GetPersonInfoByNationalNo(NationalNo, ref person); 
 
             if (IsFound)
 
-                return new clsPerson(PersonID, FirstName, SecondName, ThirdName, LastName,
-                          NationalNo, DateOfBirth, Gendor, Address, Phone, Email, NationalityCountryID, ImagePath);
+                return new clsPerson(person.PersonID, person.FirstName, person.SecondName, person.ThirdName, person.LastName,
+                          NationalNo, person.DateOfBirth, person.Gendor, person.Address, person.Phone, person.Email, person.NationalityCountryID, person.ImagePath);
             else
                 return null;
         }
