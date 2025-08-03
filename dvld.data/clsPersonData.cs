@@ -187,10 +187,7 @@ namespace dvld.data
 
 
 
-        public static int AddNewPerson(string FirstName, string SecondName,
-           string ThirdName, string LastName, string NationalNo, DateTime DateOfBirth,
-           short Gendor, string Address, string Phone, string Email,
-            int NationalityCountryID, string ImagePath)
+        public static int AddNewPerson(PersonDTO newPerson)
         {
           
             int PersonID = -1;
@@ -205,30 +202,30 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@FirstName", FirstName);
-            command.Parameters.AddWithValue("@SecondName", SecondName);
+            command.Parameters.AddWithValue("@FirstName", newPerson.FirstName);
+            command.Parameters.AddWithValue("@SecondName", newPerson.SecondName);
 
-            if (ThirdName != "" && ThirdName != null)
-                command.Parameters.AddWithValue("@ThirdName", ThirdName);
+            if (newPerson.ThirdName != "" && newPerson.ThirdName != null)
+                command.Parameters.AddWithValue("@ThirdName", newPerson.ThirdName);
             else
                 command.Parameters.AddWithValue("@ThirdName", System.DBNull.Value);
 
-            command.Parameters.AddWithValue("@LastName", LastName);
-            command.Parameters.AddWithValue("@NationalNo", NationalNo);
-            command.Parameters.AddWithValue("@DateOfBirth", DateOfBirth);
-            command.Parameters.AddWithValue("@Gendor", Gendor);
-            command.Parameters.AddWithValue("@Address", Address);
-            command.Parameters.AddWithValue("@Phone", Phone);
+            command.Parameters.AddWithValue("@LastName", newPerson.LastName);
+            command.Parameters.AddWithValue("@NationalNo", newPerson.NationalNo);
+            command.Parameters.AddWithValue("@DateOfBirth", newPerson.DateOfBirth);
+            command.Parameters.AddWithValue("@Gendor", newPerson.Gendor);
+            command.Parameters.AddWithValue("@Address", newPerson.Address);
+            command.Parameters.AddWithValue("@Phone", newPerson.Phone);
 
-            if (Email != "" && Email != null)
-                command.Parameters.AddWithValue("@Email", Email);
+            if (newPerson.Email != "" && newPerson.Email != null)
+                command.Parameters.AddWithValue("@Email", newPerson.Email);
             else
                 command.Parameters.AddWithValue("@Email", System.DBNull.Value);
 
-            command.Parameters.AddWithValue("@NationalityCountryID", NationalityCountryID);
+            command.Parameters.AddWithValue("@NationalityCountryID", newPerson.NationalityCountryID);
 
-            if (ImagePath != "" && ImagePath != null)
-                command.Parameters.AddWithValue("@ImagePath", ImagePath);
+            if (newPerson.ImagePath != "" && newPerson.ImagePath != null)
+                command.Parameters.AddWithValue("@ImagePath", newPerson.ImagePath);
             else
                 command.Parameters.AddWithValue("@ImagePath", System.DBNull.Value);
 
@@ -260,10 +257,7 @@ namespace dvld.data
 
 
 
-        public static bool UpdatePerson(int PersonID, string FirstName, string SecondName,
-           string ThirdName, string LastName, string NationalNo, DateTime DateOfBirth,
-           short Gendor, string Address, string Phone, string Email,
-            int NationalityCountryID, string ImagePath)
+        public static bool UpdatePerson(PersonDTO PersonDTO)
         {
 
             int rowsAffected = 0;
@@ -286,32 +280,32 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@PersonID", PersonID);
-            command.Parameters.AddWithValue("@FirstName", FirstName);
-            command.Parameters.AddWithValue("@SecondName", SecondName);
+            command.Parameters.AddWithValue("@PersonID", PersonDTO.PersonID);
+            command.Parameters.AddWithValue("@FirstName", PersonDTO.FirstName);
+            command.Parameters.AddWithValue("@SecondName", PersonDTO.SecondName);
 
-            if (ThirdName != "" && ThirdName != null)
-                command.Parameters.AddWithValue("@ThirdName", ThirdName);
+            if (PersonDTO.ThirdName != "" && PersonDTO.ThirdName != null)
+                command.Parameters.AddWithValue("@ThirdName", PersonDTO.ThirdName);
             else
                 command.Parameters.AddWithValue("@ThirdName", System.DBNull.Value);
 
 
-            command.Parameters.AddWithValue("@LastName", LastName);
-            command.Parameters.AddWithValue("@NationalNo", NationalNo);
-            command.Parameters.AddWithValue("@DateOfBirth", DateOfBirth);
-            command.Parameters.AddWithValue("@Gendor", Gendor);
-            command.Parameters.AddWithValue("@Address", Address);
-            command.Parameters.AddWithValue("@Phone", Phone);
+            command.Parameters.AddWithValue("@LastName", PersonDTO.LastName);
+            command.Parameters.AddWithValue("@NationalNo", PersonDTO.NationalNo);
+            command.Parameters.AddWithValue("@DateOfBirth", PersonDTO.DateOfBirth);
+            command.Parameters.AddWithValue("@Gendor", PersonDTO.Gendor);
+            command.Parameters.AddWithValue("@Address", PersonDTO.Address);
+            command.Parameters.AddWithValue("@Phone", PersonDTO.Phone);
 
-            if (Email != "" && Email != null)
-                command.Parameters.AddWithValue("@Email", Email);
+            if (PersonDTO.Email != "" && PersonDTO.Email != null)
+                command.Parameters.AddWithValue("@Email", PersonDTO.Email);
             else
                 command.Parameters.AddWithValue("@Email", System.DBNull.Value);
 
-            command.Parameters.AddWithValue("@NationalityCountryID", NationalityCountryID);
+            command.Parameters.AddWithValue("@NationalityCountryID", PersonDTO.NationalityCountryID);
 
-            if (ImagePath != "" && ImagePath != null)
-                command.Parameters.AddWithValue("@ImagePath", ImagePath);
+            if (PersonDTO.ImagePath != "" && PersonDTO.ImagePath != null)
+                command.Parameters.AddWithValue("@ImagePath", PersonDTO.ImagePath);
             else
                 command.Parameters.AddWithValue("@ImagePath", System.DBNull.Value);
 
@@ -337,10 +331,10 @@ namespace dvld.data
         }
 
 
-        public static DataTable GetAllPeople()
+        public static List<PersonDTO> GetAllPeople()
         {
 
-            DataTable dt = new DataTable();
+            List<PersonDTO> list = new List<PersonDTO>();
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
             string query =
@@ -370,10 +364,28 @@ namespace dvld.data
 
                 SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.HasRows)
+                while (reader.Read())
 
                 {
-                    dt.Load(reader);
+                    PersonDTO person = new PersonDTO
+                    {
+                        PersonID = reader.GetInt32(reader.GetOrdinal("PersonID")),
+                        NationalNo = reader.GetString(reader.GetOrdinal("NationalNo")),
+                        FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                        SecondName = reader.GetString(reader.GetOrdinal("SecondName")),
+                        ThirdName = reader.IsDBNull(reader.GetOrdinal("ThirdName")) ? null : reader.GetString(reader.GetOrdinal("ThirdName")),
+                        LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                        DateOfBirth = reader.GetDateTime(reader.GetOrdinal("DateOfBirth")),
+                        Gendor = reader.GetByte(reader.GetOrdinal("Gendor")),
+                        Address = reader.GetString(reader.GetOrdinal("Address")),
+                        Phone = reader.GetString(reader.GetOrdinal("Phone")),
+                        Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString(reader.GetOrdinal("Email")),
+                        NationalityCountryID = reader.GetInt32(reader.GetOrdinal("NationalityCountryID")),
+                        ImagePath = reader.IsDBNull(reader.GetOrdinal("ImagePath")) ? null : reader.GetString(reader.GetOrdinal("ImagePath")),
+                 
+                    };
+
+                    list.Add(person);
                 }
 
                 reader.Close();
@@ -390,7 +402,7 @@ namespace dvld.data
                 connection.Close();
             }
 
-            return dt;
+            return list;
 
         }
 

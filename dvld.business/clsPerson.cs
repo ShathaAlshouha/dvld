@@ -88,25 +88,50 @@ namespace dvld.business
         private bool _AddNewPerson()
         {
          
+            PersonDTO newPerson = new PersonDTO
+            {
+                NationalNo = this.NationalNo,
+                Address = this.Address,
+                FirstName = this.FirstName,
+                LastName = this.LastName,
+                ThirdName = this.ThirdName,
+                SecondName = this.SecondName,        
+                Email = this.Email,
+                Phone = this.Phone,
+                DateOfBirth = this.DateOfBirth,
+                ImagePath = this.ImagePath,
+                NationalityCountryID = this.NationalityCountryID,
+                Gendor = this.Gendor,
+               
+            };
 
-            this.PersonID = clsPersonData.AddNewPerson(
-                this.FirstName, this.SecondName, this.ThirdName,
-                this.LastName, this.NationalNo,
-                this.DateOfBirth, this.Gendor, this.Address, this.Phone, this.Email,
-                this.NationalityCountryID, this.ImagePath);
+            this.PersonID = clsPersonData.AddNewPerson(newPerson); 
 
             return (this.PersonID != -1);
         }
 
         private bool _UpdatePerson()
         {
-           
 
-            return clsPersonData.UpdatePerson(
-                this.PersonID, this.FirstName, this.SecondName, this.ThirdName,
-                this.LastName, this.NationalNo, this.DateOfBirth, this.Gendor,
-                this.Address, this.Phone, this.Email,
-                  this.NationalityCountryID, this.ImagePath);
+            PersonDTO person = new PersonDTO
+            {
+           
+                PersonID = this.PersonID,
+                NationalNo = this.NationalNo,
+                Address = this.Address,
+                FirstName = this.FirstName,
+                LastName = this.LastName,
+                ThirdName = this.ThirdName,
+                SecondName = this.SecondName,
+                Email = this.Email,
+                Phone = this.Phone,
+                DateOfBirth = this.DateOfBirth,
+                ImagePath = this.ImagePath,
+                NationalityCountryID = this.NationalityCountryID,
+                Gendor = this.Gendor,
+
+            };
+            return clsPersonData.UpdatePerson(person); 
         }
 
         public static clsPerson Find(int personID)
@@ -170,7 +195,7 @@ namespace dvld.business
             return false;
         }
 
-        public static DataTable GetAllPeople()
+        public static List<PersonDTO> GetAllPeople()
         {
             return clsPersonData.GetAllPeople();
         }
