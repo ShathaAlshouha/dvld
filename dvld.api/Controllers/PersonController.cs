@@ -108,13 +108,13 @@ namespace dvld.api.Controllers
         }
 
 
-        [HttpPut("{id}" , Name = "Update")]
+        [HttpPut("{id}", Name = "Update")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<PersonDTO> Update(int id, [FromBody] PersonDTO updatePerson)
         {
-            if( id < 0)
+            if (id < 0)
             {
                 return BadRequest("Invalid person data or ID.");
             }
@@ -135,7 +135,7 @@ namespace dvld.api.Controllers
             person.Email = updatePerson.Email;
             person.NationalityCountryID = updatePerson.NationalityCountryID;
             person.ImagePath = updatePerson.ImagePath;
-           
+
             person.Save();
             PersonDTO updatedDTO = new PersonDTO
             {
@@ -153,7 +153,7 @@ namespace dvld.api.Controllers
                 NationalityCountryID = person.NationalityCountryID,
                 ImagePath = person.ImagePath
             };
-            return Ok(updatedDTO); 
+            return Ok(updatedDTO);
 
         }
 
@@ -169,6 +169,72 @@ namespace dvld.api.Controllers
 
             return Ok(people);
         }
+
+        [HttpGet("{id}", Name = "IsExist")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PersonDTO))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
+        public ActionResult<bool> IsExist(int id)
+        {
+            if(id<0)
+            {
+                return BadRequest("Invalid person ID.");
+            }
+            clsPerson person = clsPerson.Find(id);
+            if (person == null)
+            {
+                return NotFound($"Person with ID {id} not found.");
+            }
+            return Ok(true);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> Delete(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid person ID.");
+            }
+
+            clsPerson person = clsPerson.Find(id);
+            if (person == null)
+            {
+                return NotFound($"Person with ID {id} not found.");
+            }
+
+            if (clsPerson.DeletePerson(id))
+            {
+                return Ok($"Person with ID {id} deleted successfully.");
+            }
+
+     
+            return StatusCode(StatusCodes.Status500InternalServerError, "Failed to delete the person.");
+        }
+
+
+
+        [HttpGet("{Nationalno}", Name = "IsExist")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PersonDTO))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<bool> IsExist(string Nationalno)
+        {
+            if (string.IsNullOrEmpty(Nationalno))
+            {
+                return BadRequest("Invalid National No.");
+            }
+            clsPerson person = clsPerson.Find(Nationalno);
+            if (person == null)
+            {
+                return NotFound($"Person with National No {Nationalno} not found.");
+            }
+            return Ok(true);
+        }
+
     }
 }
 
