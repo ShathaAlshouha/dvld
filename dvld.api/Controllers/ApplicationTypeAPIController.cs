@@ -40,10 +40,10 @@ namespace dvld.api.Controllers
         [HttpGet("GetAll")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult <IEnumerable<ApplicationTypeDTO>> GetAll()
+        public ActionResult<IEnumerable<ApplicationTypeDTO>> GetAll()
         {
             List<ApplicationTypeDTO> ApplicationTyps = clsApplicationType.GetAllApplicationTypes();
-            if (ApplicationTyps == null )
+            if (ApplicationTyps == null)
             {
                 return NotFound("No application types found.");
             }
@@ -68,8 +68,35 @@ namespace dvld.api.Controllers
 
             newApplicationType.Save();
 
-            return Ok(newApplicationType); 
+            return Ok(newApplicationType);
         }
 
+
+        [HttpPut("Update/{id}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<ApplicationTypeDTO> Update(int id, [FromBody] ApplicationTypeDTO updateApplicationTypeDTO)
+        {
+            if(id <1)
+            {
+                return BadRequest("Invalid ID provided.");
+            }
+            clsApplicationType applicationType = clsApplicationType.Find(id);
+            if (applicationType == null)
+            {
+                return NotFound($"Application Type with ID {id} not found.");
+            }
+            applicationType.Title = updateApplicationTypeDTO.Title;
+            applicationType.Fees = updateApplicationTypeDTO.Fees;
+            applicationType.Save();
+            ApplicationTypeDTO DTO = new ApplicationTypeDTO
+            {
+                ID = applicationType.ID,
+                Title = applicationType.Title,
+                Fees = applicationType.Fees
+            };
+            return Ok(DTO);
+
+        }
     }
 }
