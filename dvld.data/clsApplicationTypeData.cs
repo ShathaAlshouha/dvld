@@ -105,7 +105,7 @@ namespace dvld.data
 
         }
 
-        public static int AddNewApplicationType(string Title, float Fees)
+        public static int AddNewApplicationType(ApplicationTypeDTO applicationTypeDTO)
         {
             int ApplicationTypeID = -1;
 
@@ -118,8 +118,8 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@ApplicationTypeTitle", Title);
-            command.Parameters.AddWithValue("@ApplicationFees", Fees);
+            command.Parameters.AddWithValue("@ApplicationTypeTitle", applicationTypeDTO.Title);
+            command.Parameters.AddWithValue("@ApplicationFees", applicationTypeDTO.Fees);
 
             try
             {
@@ -135,8 +135,7 @@ namespace dvld.data
 
             catch (Exception ex)
             {
-                //Console.WriteLine("Error: " + ex.Message);
-
+                Console.WriteLine("Error: " + ex.Message);
             }
 
             finally

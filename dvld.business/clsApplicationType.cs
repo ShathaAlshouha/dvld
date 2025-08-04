@@ -43,7 +43,12 @@ namespace dvld.business
         private bool _AddNewApplicationType()
         {
        
-            this.ID = clsApplicationTypeData.AddNewApplicationType(this.Title, this.Fees);
+            ApplicationTypeDTO DTO = new ApplicationTypeDTO
+            {
+                Title = this.Title,
+                Fees = this.Fees
+            };
+            this.ID = clsApplicationTypeData.AddNewApplicationType(DTO); 
 
 
             return (this.ID != -1);

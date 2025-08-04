@@ -49,5 +49,27 @@ namespace dvld.api.Controllers
             }
             return Ok(ApplicationTyps);
         }
+
+        [HttpPost("AddNew")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<ApplicationTypeDTO> AddNewApplicationType([FromBody] ApplicationTypeDTO newAppTypeDTO)
+        {
+            if (newAppTypeDTO == null || string.IsNullOrWhiteSpace(newAppTypeDTO.Title) || newAppTypeDTO.Fees < 0)
+            {
+                return BadRequest("Invalid application type data provided.");
+            }
+
+            clsApplicationType newApplicationType = new clsApplicationType
+            {
+                Title = newAppTypeDTO.Title,
+                Fees = newAppTypeDTO.Fees
+            };
+
+            newApplicationType.Save();
+
+            return Ok(newApplicationType); 
+        }
+
     }
 }
