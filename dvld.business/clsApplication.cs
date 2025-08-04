@@ -1,4 +1,5 @@
-﻿using dvld.data;
+﻿using DTOs;
+using dvld.data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -107,6 +108,7 @@ namespace dvld.business
             return (this.ApplicationID != -1);
         }
 
+
         private bool _UpdateApplication()
         {
             //call DataAccess Layer 
@@ -119,25 +121,15 @@ namespace dvld.business
 
         public static clsApplication FindBaseApplication(int ApplicationID)
         {
-            int ApplicantPersonID = -1;
-            DateTime ApplicationDate = DateTime.Now; int ApplicationTypeID = -1;
-            byte ApplicationStatus = 1; DateTime LastStatusDate = DateTime.Now;
-            float PaidFees = 0; int CreatedByUserID = -1;
-
-            bool IsFound = clsApplicationData.GetApplicationInfoByID
-                                (
-                                    ApplicationID, ref ApplicantPersonID,
-                                    ref ApplicationDate, ref ApplicationTypeID,
-                                    ref ApplicationStatus, ref LastStatusDate,
-                                    ref PaidFees, ref CreatedByUserID
-                                );
+            ApplicationDTO DTO = new ApplicationDTO();
+            bool IsFound = clsApplicationData.GetApplicationInfoByID(ApplicationID, ref DTO);
 
             if (IsFound)
-                //we return new object of that person with the right data
-                return new clsApplication(ApplicationID, ApplicantPersonID,
-                                     ApplicationDate, ApplicationTypeID,
-                                    (enApplicationStatus)ApplicationStatus, LastStatusDate,
-                                     PaidFees, CreatedByUserID);
+            
+                return new clsApplication(DTO.ApplicationID, DTO.ApplicantPersonID,
+                                     DTO.ApplicationDate, DTO.ApplicationTypeID,
+                                    (enApplicationStatus)DTO.ApplicationStatus, DTO.LastStatusDate,
+                                     DTO.PaidFees, DTO.CreatedByUserID);
             else
                 return null;
         }
@@ -147,7 +139,10 @@ namespace dvld.business
         {
             return clsApplicationData.UpdateStatus(ApplicationID, 2);
         }
-
+        public static List<ApplicationDTO> GetAllApplications()
+        {
+          return clsApplicationData.GetAllApplications();
+        }
         public bool SetComplete()
 
         {

@@ -6,16 +6,13 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using DTOs;
 namespace dvld.data
 {
     public class clsApplicationData
     {
 
-        public static bool GetApplicationInfoByID(int ApplicationID,
-           ref int ApplicantPersonID, ref DateTime ApplicationDate, ref int ApplicationTypeID,
-           ref byte ApplicationStatus, ref DateTime LastStatusDate,
-           ref float PaidFees, ref int CreatedByUserID)
+        public static bool GetApplicationInfoByID(int ApplicationID, ref ApplicationDTO AppDTO)
         {
             bool isFound = false;
 
@@ -34,23 +31,19 @@ namespace dvld.data
 
                 if (reader.Read())
                 {
-
-                    // The record was found
                     isFound = true;
-
-                    ApplicantPersonID = (int)reader["ApplicantPersonID"];
-                    ApplicationDate = (DateTime)reader["ApplicationDate"];
-                    ApplicationTypeID = (int)reader["ApplicationTypeID"];
-                    ApplicationStatus = (byte)reader["ApplicationStatus"];
-                    LastStatusDate = (DateTime)reader["LastStatusDate"];
-                    PaidFees = Convert.ToSingle(reader["PaidFees"]);
-                    CreatedByUserID = (int)reader["CreatedByUserID"];
-
+                    AppDTO.ApplicationID = (int)reader["ApplicationID"];
+                    AppDTO.ApplicantPersonID = (int)reader["ApplicantPersonID"];
+                    AppDTO.ApplicationDate = (DateTime)reader["ApplicationDate"];
+                    AppDTO.ApplicationTypeID = (int)reader["ApplicationTypeID"];
+                    AppDTO.ApplicationStatus = (byte)reader["ApplicationStatus"];
+                    AppDTO.LastStatusDate = (DateTime)reader["LastStatusDate"];
+                    AppDTO.PaidFees = Convert.ToSingle(reader["PaidFees"]);
+                    AppDTO.CreatedByUserID = (int)reader["CreatedByUserID"];
 
                 }
                 else
                 {
-                    // The record was not found
                     isFound = false;
                 }
 
@@ -71,10 +64,10 @@ namespace dvld.data
             return isFound;
         }
 
-        public static DataTable GetAllApplications()
+        public static List<ApplicationDTO> GetAllApplications()
         {
 
-            DataTable dt = new DataTable();
+            List<ApplicationDTO> list = new List<ApplicationDTO>();
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
             string query = "select * from ApplicationsList_View order by ApplicationDate desc";
@@ -87,10 +80,19 @@ namespace dvld.data
 
                 SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.HasRows)
+                while (reader.Read())
 
                 {
-                    dt.Load(reader);
+                    list.Add(new ApplicationDTO
+                    {
+                        ApplicationID = (int)reader["ApplicationID"],
+                        ApplicantPersonID = (int)reader["ApplicantPersonID"],
+                        ApplicationTypeID = (int)reader["ApplicationTypeID"],
+                        ApplicationStatus = (byte)reader["ApplicationStatus"],
+                        LastStatusDate = (DateTime)reader["LastStatusDate"],
+                        PaidFees = Convert.ToSingle(reader["PaidFees"]),
+                        CreatedByUserID = (int)reader["CreatedByUserID"]
+                    });
                 }
 
                 reader.Close();
@@ -107,7 +109,7 @@ namespace dvld.data
                 connection.Close();
             }
 
-            return dt;
+            return list;
 
         }
 
