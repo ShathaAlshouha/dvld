@@ -91,6 +91,7 @@ namespace dvld.api.Controllers
 
             PersonDTO DTO = new PersonDTO
             {
+                PersonID = newPerson.PersonID,
                 FirstName = newPerson.FirstName,
                 SecondName = newPerson.SecondName,
                 ThirdName = newPerson.ThirdName,
@@ -169,8 +170,7 @@ namespace dvld.api.Controllers
 
             return Ok(people);
         }
-
-        [HttpGet("{id}", Name = "IsExist")]
+        [HttpGet("IsExistByID/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PersonDTO))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -217,7 +217,7 @@ namespace dvld.api.Controllers
 
 
 
-        [HttpGet("{Nationalno}", Name = "IsExist")]
+        [HttpGet("IsExistByNationalNo/{nationalNo}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PersonDTO))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
