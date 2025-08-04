@@ -5,13 +5,14 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DTOs;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace dvld.data
 {
     public class clsApplicationTypeData
     {
-        public static bool GetApplicationTypeInfoByID(int ApplicationTypeID,
-            ref string ApplicationTypeTitle, ref float ApplicationFees)
+        public static bool GetApplicationTypeInfoByID(int ApplicationTypeID, ref ApplicationTypeDTO AppDTO)
         {
             bool isFound = false;
 
@@ -31,20 +32,15 @@ namespace dvld.data
                 if (reader.Read())
                 {
 
-                    // The record was found
                     isFound = true;
-
-                    ApplicationTypeTitle = (string)reader["ApplicationTypeTitle"];
-                    ApplicationFees = Convert.ToSingle(reader["ApplicationFees"]);
-
-
-
-
+                    AppDTO.ID = Convert.ToInt32(reader["ApplicationTypeID"]);
+                    AppDTO.Title = (string)reader["ApplicationTypeTitle"];
+                    AppDTO.Fees = Convert.ToSingle(reader["ApplicationFees"]);
 
                 }
                 else
                 {
-                    // The record was not found
+        
                     isFound = false;
                 }
 
@@ -65,10 +61,10 @@ namespace dvld.data
             return isFound;
         }
 
-        public static DataTable GetAllApplicationTypes()
+        public static List<ApplicationTypeDTO> GetAllApplicationTypes()
         {
 
-            DataTable dt = new DataTable();
+            List<ApplicationTypeDTO> list = new List<ApplicationTypeDTO>(); 
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
             string query = "SELECT * FROM ApplicationTypes order by ApplicationTypeTitle";
@@ -81,27 +77,31 @@ namespace dvld.data
 
                 SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.HasRows)
+                while (reader.Read())
 
                 {
-                    dt.Load(reader);
+                    list.Add(
+                        new ApplicationTypeDTO
+                        {
+                            ID = (int)reader["ApplicationTypeID"],
+                            Title = (string)reader["ApplicationTypeTitle"],
+                            Fees = Convert.ToSingle(reader["ApplicationFees"])
+                        }); 
                 }
 
                 reader.Close();
-
-
             }
 
             catch (Exception ex)
             {
-                // Console.WriteLine("Error: " + ex.Message);
+             Console.WriteLine("Error: " + ex.Message);
             }
             finally
             {
                 connection.Close();
             }
 
-            return dt;
+            return list;
 
         }
 

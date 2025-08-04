@@ -1,4 +1,5 @@
-﻿using dvld.data;
+﻿using DTOs;
+using dvld.data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -41,8 +42,7 @@ namespace dvld.business
 
         private bool _AddNewApplicationType()
         {
-            //call DataAccess Layer 
-
+       
             this.ID = clsApplicationTypeData.AddNewApplicationType(this.Title, this.Fees);
 
 
@@ -51,24 +51,25 @@ namespace dvld.business
 
         private bool _UpdateApplicationType()
         {
-            //call DataAccess Layer 
+    
 
             return clsApplicationTypeData.UpdateApplicationType(this.ID, this.Title, this.Fees);
         }
 
         public static clsApplicationType Find(int ID)
         {
-            string Title = ""; float Fees = 0;
 
-            if (clsApplicationTypeData.GetApplicationTypeInfoByID((int)ID, ref Title, ref Fees))
+           ApplicationTypeDTO DTO = new ApplicationTypeDTO();
 
-                return new clsApplicationType(ID, Title, Fees);
+            if (clsApplicationTypeData.GetApplicationTypeInfoByID((int)ID, ref DTO))
+
+                return new clsApplicationType(DTO.ID, DTO.Title, DTO.Fees);
             else
                 return null;
 
         }
 
-        public static DataTable GetAllApplicationTypes()
+        public static List<ApplicationTypeDTO> GetAllApplicationTypes()
         {
             return clsApplicationTypeData.GetAllApplicationTypes();
 
