@@ -70,7 +70,7 @@ namespace dvld.data
             List<ApplicationDTO> list = new List<ApplicationDTO>();
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
-            string query = "select * from ApplicationsList_View order by ApplicationDate desc";
+            string query = "select * from Applications order by ApplicationDate desc";
 
             SqlCommand command = new SqlCommand(query, connection);
 
@@ -113,9 +113,7 @@ namespace dvld.data
 
         }
 
-        public static int AddNewApplication(int ApplicantPersonID, DateTime ApplicationDate, int ApplicationTypeID,
-             byte ApplicationStatus, DateTime LastStatusDate,
-             float PaidFees, int CreatedByUserID)
+        public static int AddNewApplication(ApplicationDTO newApplicationDTO)
         {
 
             //this function will return the new person id if succeeded and -1 if not.
@@ -134,13 +132,13 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("ApplicantPersonID", @ApplicantPersonID);
-            command.Parameters.AddWithValue("ApplicationDate", @ApplicationDate);
-            command.Parameters.AddWithValue("ApplicationTypeID", @ApplicationTypeID);
-            command.Parameters.AddWithValue("ApplicationStatus", @ApplicationStatus);
-            command.Parameters.AddWithValue("LastStatusDate", @LastStatusDate);
-            command.Parameters.AddWithValue("PaidFees", @PaidFees);
-            command.Parameters.AddWithValue("CreatedByUserID", @CreatedByUserID);
+            command.Parameters.AddWithValue("ApplicantPersonID", @newApplicationDTO.ApplicantPersonID);
+            command.Parameters.AddWithValue("ApplicationDate", @newApplicationDTO.ApplicationDate);
+            command.Parameters.AddWithValue("ApplicationTypeID", @newApplicationDTO.ApplicationTypeID);
+            command.Parameters.AddWithValue("ApplicationStatus", @newApplicationDTO.ApplicationStatus);
+            command.Parameters.AddWithValue("LastStatusDate", @newApplicationDTO.LastStatusDate);
+            command.Parameters.AddWithValue("PaidFees", @newApplicationDTO.PaidFees);
+            command.Parameters.AddWithValue("CreatedByUserID", @newApplicationDTO.CreatedByUserID);
 
 
 
@@ -173,11 +171,8 @@ namespace dvld.data
         }
 
 
-        public static bool UpdateApplication(int ApplicationID, int ApplicantPersonID, DateTime ApplicationDate, int ApplicationTypeID,
-             byte ApplicationStatus, DateTime LastStatusDate,
-             float PaidFees, int CreatedByUserID)
+        public static bool UpdateApplication(ApplicationDTO applicationDTO)
         {
-
             int rowsAffected = 0;
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
@@ -193,14 +188,14 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
-            command.Parameters.AddWithValue("ApplicantPersonID", @ApplicantPersonID);
-            command.Parameters.AddWithValue("ApplicationDate", @ApplicationDate);
-            command.Parameters.AddWithValue("ApplicationTypeID", @ApplicationTypeID);
-            command.Parameters.AddWithValue("ApplicationStatus", @ApplicationStatus);
-            command.Parameters.AddWithValue("LastStatusDate", @LastStatusDate);
-            command.Parameters.AddWithValue("PaidFees", @PaidFees);
-            command.Parameters.AddWithValue("CreatedByUserID", @CreatedByUserID);
+            command.Parameters.AddWithValue("@ApplicationID", applicationDTO.ApplicationID);
+            command.Parameters.AddWithValue("ApplicantPersonID", @applicationDTO.ApplicantPersonID);
+            command.Parameters.AddWithValue("ApplicationDate", @applicationDTO.ApplicationDate);
+            command.Parameters.AddWithValue("ApplicationTypeID", @applicationDTO.ApplicationTypeID);
+            command.Parameters.AddWithValue("ApplicationStatus", @applicationDTO.ApplicationStatus);
+            command.Parameters.AddWithValue("LastStatusDate", @applicationDTO.LastStatusDate);
+            command.Parameters.AddWithValue("PaidFees", @applicationDTO.PaidFees);
+            command.Parameters.AddWithValue("CreatedByUserID", @applicationDTO.CreatedByUserID);
 
 
             try

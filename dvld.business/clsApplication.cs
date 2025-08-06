@@ -98,12 +98,17 @@ namespace dvld.business
 
         private bool _AddNewApplication()
         {
-            //call DataAccess Layer 
-
-            this.ApplicationID = clsApplicationData.AddNewApplication(
-                this.ApplicantPersonID, this.ApplicationDate,
-                this.ApplicationTypeID, (byte)this.ApplicationStatus,
-                this.LastStatusDate, this.PaidFees, this.CreatedByUserID);
+            ApplicationDTO DTO = new ApplicationDTO
+            {
+                ApplicantPersonID = this.ApplicantPersonID,
+                ApplicationDate = this.ApplicationDate,
+                ApplicationTypeID = this.ApplicationTypeID,
+                ApplicationStatus = (byte)this.ApplicationStatus,
+                LastStatusDate = this.LastStatusDate,
+                PaidFees = this.PaidFees,
+                CreatedByUserID = this.CreatedByUserID
+            };
+            this.ApplicationID = clsApplicationData.AddNewApplication(DTO); 
 
             return (this.ApplicationID != -1);
         }
@@ -111,11 +116,20 @@ namespace dvld.business
 
         private bool _UpdateApplication()
         {
-            //call DataAccess Layer 
 
-            return clsApplicationData.UpdateApplication(this.ApplicationID, this.ApplicantPersonID, this.ApplicationDate,
-                this.ApplicationTypeID, (byte)this.ApplicationStatus,
-                this.LastStatusDate, this.PaidFees, this.CreatedByUserID);
+            ApplicationDTO DTO = new ApplicationDTO
+            {
+                ApplicationID = this.ApplicationID,
+                ApplicantPersonID = this.ApplicantPersonID,
+                ApplicationDate = this.ApplicationDate,
+                ApplicationTypeID = this.ApplicationTypeID,
+                ApplicationStatus = (byte)this.ApplicationStatus,
+                CreatedByUserID = this.CreatedByUserID,
+                LastStatusDate = this.LastStatusDate,
+                PaidFees = this.PaidFees
+            };
+
+            return clsApplicationData.UpdateApplication(DTO); 
 
         }
 
@@ -208,17 +222,6 @@ namespace dvld.business
         {
             return GetActiveApplicationID(this.ApplicantPersonID, ApplicationTypeID);
         }
-
-
-
-
-
-
-
-
-
-
-
 
     }
 }
