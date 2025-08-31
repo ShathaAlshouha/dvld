@@ -174,7 +174,7 @@ namespace dvld.api.Controllers
         [HttpGet("{localAppId}/DoesPassTestType/{testTypeId}")]
         public ActionResult<bool> DoesPassTestType(int localAppId, int testTypeId)
         {
-          
+
             if (!Enum.IsDefined(typeof(clsTestType.enTestType), testTypeId))
                 return BadRequest("Invalid TestTypeID");
 
@@ -182,23 +182,27 @@ namespace dvld.api.Controllers
 
             return Ok(result);
         }
-    
+
+
         [HttpGet("{localAppId}/DoesPassTestTypeInstance/{testTypeId}")]
         public ActionResult<bool> DoesPassTestTypeInstance(int localAppId, int testTypeId)
         {
             if (!Enum.IsDefined(typeof(clsTestType.enTestType), testTypeId))
                 return BadRequest("Invalid TestTypeID");
 
-          
+
             var app = clsLocalDrivingLicenseApplication.FindByLocalDrivingAppLicenseID(localAppId);
             if (app == null)
                 return NotFound($"Application with ID {localAppId} not found.");
 
-       
+
             bool result = app.DoesPassTestType((clsTestType.enTestType)testTypeId);
 
             return Ok(result);
         }
+
+
+
 
         [HttpGet("{localAppId}/DoesPassPreviousTest/{currentTestTypeId}")]
         public ActionResult<bool> DoesPassPreviousTest(int localAppId, int currentTestTypeId)
@@ -215,22 +219,37 @@ namespace dvld.api.Controllers
             return Ok(result);
         }
 
+
+
+
         [HttpGet("{localAppId}/IsAttendTest/{testTypeId}")]
 
-        public ActionResult<bool> IsAttendTest(int localAppId , int testTypeId)
+        public ActionResult<bool> IsAttendTest(int localAppId, int testTypeId)
         {
 
             if (!Enum.IsDefined(typeof(clsTestType.enTestType), testTypeId))
                 return BadRequest("Invalid TestTypeID");
 
-            
+
             clsLocalDrivingLicenseApplication applicaion = clsLocalDrivingLicenseApplication.FindByLocalDrivingAppLicenseID(localAppId);
             if (applicaion == null)
-                return NotFound($"Application with ID {localAppId} not found."); 
+                return NotFound($"Application with ID {localAppId} not found.");
 
             bool result = applicaion.DoesAttendTestType((clsTestType.enTestType)testTypeId);
-            return Ok(result); 
+            return Ok(result);
         }
+
+        [HttpGet("IsAttendTestStatic")]
+        public ActionResult<bool> IsAttendTestStatic(int localAppId, int testTypeId)
+        {
+            if (!Enum.IsDefined(typeof(clsTestType.enTestType), testTypeId))
+                return BadRequest("Invalid TestTypeID");
+
+            bool result = new clsLocalDrivingLicenseApplication().DoesAttendTestType(localAppId, (clsTestType.enTestType)testTypeId);
+            return Ok(result);
+        }
+
+
 
         [HttpGet("{localAppId}/TotalTrialperTests/{testTypeId}")]
         public ActionResult<int> TotalTrialperTests(int localAppId, int testTypeId)
@@ -243,9 +262,13 @@ namespace dvld.api.Controllers
             if (applicaion == null)
                 return NotFound($"Application with ID {localAppId} not found.");
 
-            totalTrials = applicaion.GetTotalTrialsPerTest((clsTestType.enTestType)testTypeId); 
+            totalTrials = applicaion.GetTotalTrialsPerTest((clsTestType.enTestType)testTypeId);
             return Ok(totalTrials);
         }
+
+
+
+
 
         [HttpGet("{localAppId}/IsActiveScheduledTest/{testTypeId}")]
         public ActionResult<bool> IsActiveScheduledTest(int localAppId, int testTypeId)
@@ -260,5 +283,31 @@ namespace dvld.api.Controllers
             bool result = clsLocalDrivingLicenseApplicationData.IsThereAnActiveScheduledTest(localAppId, testTypeId);
             return Ok(result);
         }
+        [HttpGet("GetPassedTests")]
+        public ActionResult<List<clsTestType.enTestType>> GetPassedTests(int localAppId)
+        {
+            if (localAppId <= 0)
+                return BadRequest("Invalid Local Driving License Application ID");
+
+            clsLocalDrivingLicenseApplication applicaion = clsLocalDrivingLicenseApplication.FindByLocalDrivingAppLicenseID(localAppId);
+            if (applicaion == null)
+                return NotFound($"Application with ID {localAppId} not found.");
+
+            var passedTests = applicaion.GetPassedTestCount();
+            return Ok(passedTests);
+        }
+        [HttpGet("{LocalApplicationId}/GetPassedTests")]
+        public ActionResult<List<clsTestType.enTestType>> GetPassedTestType(int localAppId)
+        {
+            if (localAppId <= 0)
+                return BadRequest("Invalid Local Driving License Application ID");
+
+
+            var passedTests = clsLocalDrivingLicenseApplication.GetPassedTestCount(localAppId); 
+            return Ok(passedTests);
+        }
+
+
     }
+
 }
