@@ -283,28 +283,40 @@ namespace dvld.api.Controllers
             bool result = clsLocalDrivingLicenseApplicationData.IsThereAnActiveScheduledTest(localAppId, testTypeId);
             return Ok(result);
         }
-        [HttpGet("GetPassedTests")]
-        public ActionResult<List<clsTestType.enTestType>> GetPassedTests(int localAppId)
+        [HttpGet("{localAppId}/PassedAllTests")]
+        public ActionResult<bool> PassedAllTestsInstance(int localAppId)
         {
-            if (localAppId <= 0)
-                return BadRequest("Invalid Local Driving License Application ID");
-
-            clsLocalDrivingLicenseApplication applicaion = clsLocalDrivingLicenseApplication.FindByLocalDrivingAppLicenseID(localAppId);
-            if (applicaion == null)
+            var app = clsLocalDrivingLicenseApplication.FindByLocalDrivingAppLicenseID(localAppId);
+            if (app == null)
                 return NotFound($"Application with ID {localAppId} not found.");
 
-            var passedTests = applicaion.GetPassedTestCount();
-            return Ok(passedTests);
+            bool result = app.();
+            return Ok(result);
         }
-        [HttpGet("{LocalApplicationId}/GetPassedTests")]
-        public ActionResult<List<clsTestType.enTestType>> GetPassedTestType(int localAppId)
+
+        [HttpGet("{localAppId}/GetPassedTestCount")]
+        public ActionResult<byte> GetPassedTestCountInstance(int localAppId)
         {
-            if (localAppId <= 0)
-                return BadRequest("Invalid Local Driving License Application ID");
+            var app = clsLocalDrivingLicenseApplication.FindByLocalDrivingAppLicenseID(localAppId);
+            if (app == null)
+                return NotFound($"Application with ID {localAppId} not found.");
 
+            byte result = app.GetPassedTestCount();
+            return Ok(result);
+        }
 
-            var passedTests = clsLocalDrivingLicenseApplication.GetPassedTestCount(localAppId); 
-            return Ok(passedTests);
+        [HttpGet("PassedAllTestsStatic")]
+        public ActionResult<bool> PassedAllTestsStatic(int localAppId)
+        {
+            bool result = clsLocalDrivingLicenseApplication.PassedAllTests(localAppId);
+            return Ok(result);
+        }
+
+        [HttpGet("GetPassedTestCountStatic")]
+        public ActionResult<byte> GetPassedTestCountStatic(int localAppId)
+        {
+            byte result = clsLocalDrivingLicenseApplication.GetPassedTestCount(localAppId);
+            return Ok(result);
         }
 
 
