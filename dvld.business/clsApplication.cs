@@ -93,6 +93,7 @@ namespace dvld.business
             this.PaidFees = PaidFees;
             this.CreatedByUserID = CreatedByUserID;
             this.CreatedByUserInfo = clsUser.FindByUserID(CreatedByUserID);
+            this.PersonInfo = clsPerson.Find(ApplicantPersonID);
             Mode = enMode.Update;
         }
 

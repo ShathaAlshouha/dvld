@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DTOs;
 using static System.Net.Mime.MediaTypeNames;
+using System.Numerics;
 
 namespace dvld.business
 {
@@ -53,7 +54,7 @@ namespace dvld.business
 
             this.LicenseClassID = licenseClassID;
             this.LicenseClassInfo = clsLicenseClass.Find(licenseClassID);
-
+            this.PersonInfo = clsPerson.Find(ApplicantPersonID);
             this.Mode = enMode.Update;
         }
 
@@ -214,7 +215,14 @@ namespace dvld.business
             return clsLocalDrivingLicenseApplicationData.DoesPassTestType(this.LocalDrivingLicenseApplicationID, (int)TestTypeID);
         }
 
-     
+
+        public static bool DoesPassTestType(int LocalDrivingLicenseApplicationID, clsTestType.enTestType TestTypeID)
+
+        {
+            return clsLocalDrivingLicenseApplicationData.DoesPassTestType(LocalDrivingLicenseApplicationID, (int)TestTypeID);
+        }
+
+
         public bool DoesPassPreviousTest(clsTestType.enTestType CurrentTestType)
         {
 
@@ -242,20 +250,25 @@ namespace dvld.business
             }
         }
 
-        public static bool DoesPassTestType(int LocalDrivingLicenseApplicationID, clsTestType.enTestType TestTypeID)
-
-        {
-            return clsLocalDrivingLicenseApplicationData.DoesPassTestType(LocalDrivingLicenseApplicationID, (int)TestTypeID);
-        }
-
         public bool DoesAttendTestType(clsTestType.enTestType TestTypeID)
 
         {
             return clsLocalDrivingLicenseApplicationData.DoesAttendTestType(this.LocalDrivingLicenseApplicationID, (int)TestTypeID);
         }
 
+        public int GetTotalTrialsPerTest ( clsTestType.enTestType TestTypeID)
+        {
 
+            return clsLocalDrivingLicenseApplicationData.TotalTrialsPerTest(this.LocalDrivingLicenseApplicationID, (int)TestTypeID);
 
+        }
+
+        public static bool IsThereAnActiveScheduledTest(int LocalDrivingLicenseApplicationID, clsTestType.enTestType TestTypeID)
+
+        {
+
+            return clsLocalDrivingLicenseApplicationData.IsThereAnActiveScheduledTest(LocalDrivingLicenseApplicationID, (int)TestTypeID);
+        }
 
     }
 }
