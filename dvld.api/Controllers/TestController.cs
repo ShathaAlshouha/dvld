@@ -81,7 +81,30 @@ namespace dvld.api.Controllers
             return Ok(DTO);
 
 
-        } 
+        }
+
+        [HttpGet("PassedAllTests/{LocalDrivingLicenseApplication}" )]
+        public ActionResult<bool> PssedAllTests(int LocalDrivingLicenseApplication)
+        {
+            if(LocalDrivingLicenseApplication<=0)
+            {
+                return BadRequest("Invalid id"); 
+            }
+            bool resulte = clsTest.PassedAllTests(LocalDrivingLicenseApplication);
+            return Ok(resulte); 
+        }
+
+
+        [HttpGet("PassedTestCount/{LocalDrivingLicenseApplication}")]
+        public ActionResult<byte> PassedTestCount(int LocalDrivingLicenseApplication)
+        {
+            if (LocalDrivingLicenseApplication <= 0)
+            {
+                return BadRequest("Invalid id");
+            }
+            byte resulte = clsTest.GetPassedTestCount(LocalDrivingLicenseApplication);
+            return Ok(resulte);
+        }
 
     }
 }
