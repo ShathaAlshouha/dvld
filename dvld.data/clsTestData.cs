@@ -65,9 +65,7 @@ namespace dvld.data
         }
 
         public static bool GetLastTestByPersonAndTestTypeAndLicenseClass
-            (int PersonID, int LicenseClassID, int TestTypeID, ref int TestID,
-              ref int TestAppointmentID, ref bool TestResult,
-              ref string Notes, ref int CreatedByUserID)
+            (int PersonID, int LicenseClassID, int TestTypeID, ref TestDTO testDTO)
         {
             bool isFound = false;
 
@@ -99,16 +97,16 @@ namespace dvld.data
                 if (reader.Read())
                 {
                     isFound = true;
-                    TestID = (int)reader["TestID"];
-                    TestAppointmentID = (int)reader["TestAppointmentID"];
-                    TestResult = (bool)reader["TestResult"];
+                    testDTO.TestID = (int)reader["TestID"];
+                    testDTO.TestAppointmentID = (int)reader["TestAppointmentID"];
+                    testDTO.TestResult = (bool)reader["TestResult"];
                     if (reader["Notes"] == DBNull.Value)
 
-                        Notes = "";
+                        testDTO.Notes = "";
                     else
-                        Notes = (string)reader["Notes"];
+                        testDTO.Notes = (string)reader["Notes"];
 
-                    CreatedByUserID = (int)reader["CreatedByUserID"];
+                    testDTO.CreatedByUserID = (int)reader["CreatedByUserID"];
 
                 }
                 else

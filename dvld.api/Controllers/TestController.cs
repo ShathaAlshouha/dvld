@@ -30,5 +30,22 @@ namespace dvld.api.Controllers
             return Ok(testDTO);
         }
 
+        [HttpGet("FindByPerson_TestType_LicenseClass/{personId}/{TestType}/{LicenseClass}")]
+        public ActionResult<TestDTO> FindByPerson_TestType_LicenseClass (int personId, int TestType, int LicenseClass)
+        {
+            if (personId <= 0)
+                return BadRequest("Invalid Person ID");
+            clsTest test = clsTest.FindLastTestPerPersonAndLicenseClass(personId, LicenseClass, (clsTestType.enTestType)TestType);
+            if (test == null)
+                return NotFound("Test not found");
+            TestDTO testDTO = new TestDTO
+            {
+                TestAppointmentID = test.TestAppointmentID,
+                TestResult = test.TestResult,
+                Notes = test.Notes,
+                CreatedByUserID = test.CreatedByUserID
+            };
+            return Ok(testDTO);
+        }
     }
 }
