@@ -5,15 +5,13 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using DTOs; 
 namespace dvld.data
 {
     public class clsTestData
     {
 
-        public static bool GetTestInfoByID(int TestID,
-              ref int TestAppointmentID, ref bool TestResult,
-              ref string Notes, ref int CreatedByUserID)
+        public static bool GetTestInfoByID(int TestID, ref TestDTO testDTO )
         {
             bool isFound = false;
 
@@ -35,15 +33,15 @@ namespace dvld.data
 
                     isFound = true;
 
-                    TestAppointmentID = (int)reader["TestAppointmentID"];
-                    TestResult = (bool)reader["TestResult"];
+                    testDTO.TestAppointmentID = (int)reader["TestAppointmentID"];
+                    testDTO.TestResult = (bool)reader["TestResult"];
                     if (reader["Notes"] == DBNull.Value)
 
-                        Notes = "";
+                        testDTO.Notes = "";
                     else
-                        Notes = (string)reader["Notes"];
+                        testDTO.Notes = (string)reader["Notes"];
 
-                    CreatedByUserID = (int)reader["CreatedByUserID"];
+                    testDTO.CreatedByUserID = (int)reader["CreatedByUserID"];
 
                 }
                 else

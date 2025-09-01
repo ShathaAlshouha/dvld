@@ -1,4 +1,5 @@
-﻿using dvld.data;
+﻿using DTOs;
+using dvld.data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -68,16 +69,10 @@ namespace dvld.business
 
         public static clsTest Find(int TestID)
         {
-            int TestAppointmentID = -1;
-            bool TestResult = false; string Notes = ""; int CreatedByUserID = -1;
+            TestDTO DTO = new TestDTO();
+            if (clsTestData.GetTestInfoByID(TestID, ref DTO))
 
-            if (clsTestData.GetTestInfoByID(TestID,
-            ref TestAppointmentID, ref TestResult,
-            ref Notes, ref CreatedByUserID))
-
-                return new clsTest(TestID,
-                        TestAppointmentID, TestResult,
-                        Notes, CreatedByUserID);
+                return new clsTest(TestID, DTO.TestAppointmentID ,DTO.TestResult,DTO.Notes , DTO.CreatedByUserID); 
             else
                 return null;
 
