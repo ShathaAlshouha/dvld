@@ -132,10 +132,11 @@ namespace dvld.data
             return isFound;
         }
 
-        public static DataTable GetAllTests()
+        public static List<TestDTO> GetAllTests()
         {
 
-            DataTable dt = new DataTable();
+            List<TestDTO> list = new List<TestDTO>();
+
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
             string query = "SELECT * FROM Tests order by TestID";
@@ -148,9 +149,17 @@ namespace dvld.data
 
                 SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.HasRows)
+                while (reader.HasRows)
                 {
-                    dt.Load(reader);
+                    list.Add(new TestDTO
+                    {
+                        TestID = (int)reader["TestID"],
+                        TestAppointmentID = (int)reader["TestAppointmentID"],
+                        TestResult = (bool)reader["TestResult"],
+                        Notes = reader["Notes"] == DBNull.Value ? "" : (string)reader["Notes"],
+                        CreatedByUserID = (int)reader["CreatedByUserID"]
+                    }); 
+                    
                 }
 
                 reader.Close();
@@ -165,12 +174,11 @@ namespace dvld.data
                 connection.Close();
             }
 
-            return dt;
+            return list;
 
         }
 
-        public static int AddNewTest(int TestAppointmentID, bool TestResult,
-            string Notes, int CreatedByUserID)
+        public static int AddNewTest(TestDTO newTest)
         {
             int TestID = -1;
 
@@ -188,17 +196,17 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@TestAppointmentID", TestAppointmentID);
-            command.Parameters.AddWithValue("@TestResult", TestResult);
+            command.Parameters.AddWithValue("@TestAppointmentID", newTest.TestAppointmentID);
+            command.Parameters.AddWithValue("@TestResult", newTest.TestResult);
 
-            if (Notes != "" && Notes != null)
-                command.Parameters.AddWithValue("@Notes", Notes);
+            if (newTest.Notes != "" && newTest.Notes != null)
+                command.Parameters.AddWithValue("@Notes", newTest.Notes);
             else
                 command.Parameters.AddWithValue("@Notes", System.DBNull.Value);
 
 
 
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
+            command.Parameters.AddWithValue("@CreatedByUserID", newTest.CreatedByUserID);
 
             try
             {

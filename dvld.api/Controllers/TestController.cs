@@ -13,12 +13,12 @@ namespace dvld.api.Controllers
     public class TestController : ControllerBase
     {
         [HttpGet("FindTest/{testID}")]
-        public ActionResult <TestDTO> Find(int testID)
+        public ActionResult<TestDTO> Find(int testID)
         {
-            if(testID <= 0)
+            if (testID <= 0)
                 return BadRequest("Invalid Test ID");
             clsTest test = clsTest.Find(testID);
-            if(test == null)
+            if (test == null)
                 return NotFound("Test not found");
             TestDTO testDTO = new TestDTO
             {
@@ -26,12 +26,12 @@ namespace dvld.api.Controllers
                 TestResult = test.TestResult,
                 Notes = test.Notes,
                 CreatedByUserID = test.CreatedByUserID
-            }; 
+            };
             return Ok(testDTO);
         }
 
         [HttpGet("FindByPerson_TestType_LicenseClass/{personId}/{TestType}/{LicenseClass}")]
-        public ActionResult<TestDTO> FindByPerson_TestType_LicenseClass (int personId, int TestType, int LicenseClass)
+        public ActionResult<TestDTO> FindByPerson_TestType_LicenseClass(int personId, int TestType, int LicenseClass)
         {
             if (personId <= 0)
                 return BadRequest("Invalid Person ID");
@@ -47,5 +47,41 @@ namespace dvld.api.Controllers
             };
             return Ok(testDTO);
         }
+
+        [HttpGet("GetAll")]
+        public ActionResult<List<TestDTO>> GetAll()
+        {
+            List<TestDTO> tests = clsTest.GetAllTests();
+            return Ok(tests);
+        }
+
+        [HttpPost("CreateTest")]
+        public ActionResult<int> CreateTest([FromBody] TestDTO testDTO)
+        {
+            if (testDTO == null)
+                return BadRequest("Test data is null");
+            clsTest test = new clsTest
+            {
+                TestAppointmentID = testDTO.TestAppointmentID,
+                TestResult = testDTO.TestResult,
+                Notes = testDTO.Notes,
+                CreatedByUserID = testDTO.CreatedByUserID
+            };
+            test.Save();
+
+            TestDTO DTO = new TestDTO
+            {
+                TestID = test.TestID,
+                TestAppointmentID = test.TestAppointmentID,
+                TestResult = test.TestResult,
+                Notes = test.Notes,
+                CreatedByUserID = test.CreatedByUserID
+            };
+
+            return Ok(DTO);
+
+
+        } 
+
     }
 }

@@ -52,9 +52,16 @@ namespace dvld.business
         private bool _AddNewTest()
         {
      
+            TestDTO testDTO = new TestDTO
+            {
 
-            this.TestID = clsTestData.AddNewTest(this.TestAppointmentID,
-                this.TestResult, this.Notes, this.CreatedByUserID);
+                TestAppointmentID = this.TestAppointmentID,
+                TestResult = this.TestResult,
+                Notes = this.Notes,
+                CreatedByUserID = this.CreatedByUserID
+            };
+
+            this.TestID = clsTestData.AddNewTest(testDTO); 
 
 
             return (this.TestID != -1);
@@ -93,7 +100,7 @@ namespace dvld.business
 
         }
 
-        public static DataTable GetAllTests()
+        public static List<TestDTO> GetAllTests()
         {
             return clsTestData.GetAllTests();
 
