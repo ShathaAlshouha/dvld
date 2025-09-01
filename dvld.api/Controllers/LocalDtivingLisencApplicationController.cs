@@ -290,7 +290,7 @@ namespace dvld.api.Controllers
             if (app == null)
                 return NotFound($"Application with ID {localAppId} not found.");
 
-            bool result = app.();
+            bool result = app.PassedAllTests(); 
             return Ok(result);
         }
 
@@ -319,7 +319,21 @@ namespace dvld.api.Controllers
             return Ok(result);
         }
 
-
+        [HttpGet("GetPassedTestCount")]
+        public ActionResult<byte> GetPassedTestCount(int localAppId)
+        {
+            if(localAppId <= 0)
+            {
+                return BadRequest("invalid Id"); 
+            }
+            clsLocalDrivingLicenseApplication application = clsLocalDrivingLicenseApplication.FindByLocalDrivingAppLicenseID(localAppId); 
+            if(application == null)
+            {
+                return NotFound("Not Found"); 
+            }
+            byte result = clsLocalDrivingLicenseApplication.GetPassedTestCount(localAppId);
+            return Ok(result);
+        }
     }
 
 }
