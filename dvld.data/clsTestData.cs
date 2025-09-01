@@ -236,8 +236,7 @@ namespace dvld.data
 
         }
 
-        public static bool UpdateTest(int TestID, int TestAppointmentID, bool TestResult,
-            string Notes, int CreatedByUserID)
+        public static bool UpdateTest(TestDTO test)
         {
 
             int rowsAffected = 0;
@@ -252,11 +251,11 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@TestID", TestID);
-            command.Parameters.AddWithValue("@TestAppointmentID", TestAppointmentID);
-            command.Parameters.AddWithValue("@TestResult", TestResult);
-            command.Parameters.AddWithValue("@Notes", Notes);
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
+            command.Parameters.AddWithValue("@TestID", test.TestID);
+            command.Parameters.AddWithValue("@TestAppointmentID", test.TestAppointmentID);
+            command.Parameters.AddWithValue("@TestResult", test.TestResult);
+            command.Parameters.AddWithValue("@Notes", test.Notes);
+            command.Parameters.AddWithValue("@CreatedByUserID", test.CreatedByUserID);
 
             try
             {

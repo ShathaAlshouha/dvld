@@ -83,15 +83,15 @@ namespace dvld.api.Controllers
 
         }
 
-        [HttpGet("PassedAllTests/{LocalDrivingLicenseApplication}" )]
+        [HttpGet("PassedAllTests/{LocalDrivingLicenseApplication}")]
         public ActionResult<bool> PssedAllTests(int LocalDrivingLicenseApplication)
         {
-            if(LocalDrivingLicenseApplication<=0)
+            if (LocalDrivingLicenseApplication <= 0)
             {
-                return BadRequest("Invalid id"); 
+                return BadRequest("Invalid id");
             }
             bool resulte = clsTest.PassedAllTests(LocalDrivingLicenseApplication);
-            return Ok(resulte); 
+            return Ok(resulte);
         }
 
 
@@ -104,6 +104,35 @@ namespace dvld.api.Controllers
             }
             byte resulte = clsTest.GetPassedTestCount(LocalDrivingLicenseApplication);
             return Ok(resulte);
+        }
+
+        [HttpPut("UpdateTest/{testID}")]
+        public ActionResult<TestDTO> EditTest(int testID, [FromBody] TestDTO testDTO)
+        {
+            if (testID <= 0 || testDTO == null)
+            {
+                return BadRequest("Invalid Test ID or Test data is null");
+            }
+            clsTest test = new clsTest
+            {
+                TestID = testID,
+                TestAppointmentID = testDTO.TestAppointmentID,
+                TestResult = testDTO.TestResult,
+                Notes = testDTO.Notes,
+                CreatedByUserID = testDTO.CreatedByUserID
+            };
+            test.Save();
+            TestDTO DTO = new TestDTO
+            {
+                TestID = test.TestID,
+                TestAppointmentID = test.TestAppointmentID,
+                TestResult = test.TestResult,
+                Notes = test.Notes,
+                CreatedByUserID = test.CreatedByUserID
+
+            };
+            return Ok(DTO);
+
         }
 
     }

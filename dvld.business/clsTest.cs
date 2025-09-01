@@ -69,9 +69,17 @@ namespace dvld.business
 
         private bool _UpdateTest()
         {
-   
-            return clsTestData.UpdateTest(this.TestID, this.TestAppointmentID,
-                this.TestResult, this.Notes, this.CreatedByUserID);
+            TestDTO updatetest = new TestDTO
+            {
+                TestID = this.TestID,
+                TestAppointmentID = this.TestAppointmentID,
+                TestResult = this.TestResult,
+                Notes = this.Notes,
+                CreatedByUserID = this.CreatedByUserID
+
+            };
+
+            return clsTestData.UpdateTest(updatetest); 
         }
 
         public static clsTest Find(int TestID)
