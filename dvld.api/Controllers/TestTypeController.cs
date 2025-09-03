@@ -72,6 +72,33 @@ namespace dvld.api.Controllers
             return CreatedAtAction(nameof(GetByID), new { id = newTestType.TestTypeID }, newTestType);
         }
 
-     
+        [HttpPut("UpdateTestType/{id}")]
+        public ActionResult<testTypeDTO> UpdateTestType(int id, [FromBody] testTypeDTO updatedTestType)
+        {
+            if (id <= 0 || updatedTestType == null || string.IsNullOrEmpty(updatedTestType.TestTypeTitle) || updatedTestType.TestFees <= 0)
+            {
+                return BadRequest("Invalid Test Type Data");
+            }
+
+            clsTestType existingTestType = clsTestType.Find((clsTestType.enTestType)id);
+            if (existingTestType == null)
+            {
+                return NotFound("Test Type Not Found");
+            }
+
+            existingTestType.Title = updatedTestType.TestTypeTitle;
+            existingTestType.Description = updatedTestType.Description;
+            existingTestType.Fees = updatedTestType.TestFees;
+
+            bool isUpdated = existingTestType.Save();
+            if (!isUpdated)
+            {
+                return BadRequest("Failed to update Test Type");
+            }
+
+            updatedTestType.TestTypeID = id;
+
+            return Ok(updatedTestType);
+        }   
     }
 }
