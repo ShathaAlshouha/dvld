@@ -11,7 +11,7 @@ namespace dvld.data
 {
     public class clsTestAppointmentData
     {
-        public static bool GetTestAppointmentInfoByID(int TestAppointmentID, ref TestAppointmentDTOcs DTO)
+        public static bool GetTestAppointmentInfoByID(int TestAppointmentID, ref TestAppointmentDTO DTO)
         {
             bool isFound = false;
 
@@ -69,10 +69,8 @@ namespace dvld.data
             return isFound;
         }
 
-        public static bool GetLastTestAppointment(
-             int LocalDrivingLicenseApplicationID, int TestTypeID,
-            ref int TestAppointmentID, ref DateTime AppointmentDate,
-            ref float PaidFees, ref int CreatedByUserID, ref bool IsLocked, ref int RetakeTestApplicationID)
+        public static bool GetLastTestAppointment( int LocalDrivingLicenseApplicationID, int TestTypeID,
+            ref TestAppointmentDTO DTO)
         {
             bool isFound = false;
 
@@ -101,16 +99,16 @@ namespace dvld.data
                     // The record was found
                     isFound = true;
 
-                    TestAppointmentID = (int)reader["TestAppointmentID"];
-                    AppointmentDate = (DateTime)reader["AppointmentDate"];
-                    PaidFees = Convert.ToSingle(reader["PaidFees"]);
-                    CreatedByUserID = (int)reader["CreatedByUserID"];
-                    IsLocked = (bool)reader["IsLocked"];
+                    DTO.TestAppointmentID = (int)reader["TestAppointmentID"];
+                    DTO.AppointmentDate = (DateTime)reader["AppointmentDate"];
+                    DTO.PaidFees = Convert.ToSingle(reader["PaidFees"]);
+                    DTO.CreatedByUserID = (int)reader["CreatedByUserID"];
+                    DTO.IsLocked = (bool)reader["IsLocked"];
 
                     if (reader["RetakeTestApplicationID"] == DBNull.Value)
-                        RetakeTestApplicationID = -1;
+                        DTO.RetakeTestApplicationID = -1;
                     else
-                        RetakeTestApplicationID = (int)reader["RetakeTestApplicationID"];
+                        DTO.RetakeTestApplicationID = (int)reader["RetakeTestApplicationID"];
 
 
                 }
@@ -137,11 +135,12 @@ namespace dvld.data
             return isFound;
         }
 
-        public static DataTable GetAllTestAppointments()
+        public static List<TestAppointmentDetailsDTO> GetAllTestAppointments()
         {
 
-            DataTable dt = new DataTable();
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
+            List<TestAppointmentDetailsDTO> list = new List<TestAppointmentDetailsDTO> ();
+
+             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
             string query = @"select * from TestAppointments_View
                                   order by AppointmentDate Desc";
@@ -155,10 +154,21 @@ namespace dvld.data
 
                 SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.HasRows)
+                while (reader.Read())
 
                 {
-                    dt.Load(reader);
+                    list.Add(new TestAppointmentDetailsDTO
+                    {
+                        TestAppointmentID = (int)reader["TestAppointmentID"],
+                        AppointmentDate = (DateTime)reader["AppointmentDate"],
+                        TestTypeID = (int)reader["TestTypeID"],
+                        LocalDrivingLicenseApplicationID = (int)reader["LocalDrivingLicenseApplicationID"],
+                        PaidFees = Convert.ToSingle(reader["PaidFees"]),
+                        FullName = reader["FullName"].ToString(),
+                        IsLocked = (bool)reader["IsLocked"]
+
+                    }); 
+            
                 }
 
                 reader.Close();
@@ -175,63 +185,48 @@ namespace dvld.data
                 connection.Close();
             }
 
-            return dt;
+            return list;    
 
         }
 
-        public static DataTable GetApplicationTestAppointmentsPerTestType(int LocalDrivingLicenseApplicationID, int TestTypeID)
+        public static List<TestAppointmentViewDTO> GetApplicationTestAppointmentsPerTestType(int LocalDrivingLicenseApplicationID, int TestTypeID)
         {
+            var list = new List<TestAppointmentViewDTO>();
 
-            DataTable dt = new DataTable();
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = @"SELECT TestAppointmentID, AppointmentDate,PaidFees, IsLocked
-                        FROM TestAppointments
-                        WHERE  
-                        (TestTypeID = @TestTypeID) 
-                        AND (LocalDrivingLicenseApplicationID = @LocalDrivingLicenseApplicationID)
-                        order by TestAppointmentID desc;";
-
-
-            SqlCommand command = new SqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("@LocalDrivingLicenseApplicationID", LocalDrivingLicenseApplicationID);
-            command.Parameters.AddWithValue("@TestTypeID", TestTypeID);
-
-
-            try
+            using (SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
             {
-                connection.Open();
+                string query = @"SELECT TestAppointmentID, AppointmentDate, PaidFees, IsLocked
+                         FROM TestAppointments
+                         WHERE TestTypeID = @TestTypeID
+                           AND LocalDrivingLicenseApplicationID = @LocalDrivingLicenseApplicationID
+                         ORDER BY TestAppointmentID DESC;";
 
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-
+                using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    dt.Load(reader);
+                    command.Parameters.AddWithValue("@TestTypeID", TestTypeID);
+                    command.Parameters.AddWithValue("@LocalDrivingLicenseApplicationID", LocalDrivingLicenseApplicationID);
+
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        list.Add(new TestAppointmentViewDTO
+                        {
+                            TestAppointmentID = (int)reader["TestAppointmentID"],
+                            AppointmentDate = (DateTime)reader["AppointmentDate"],
+                            PaidFees = reader["PaidFees"] == DBNull.Value ? 0 : Convert.ToSingle(reader["PaidFees"]),
+                            IsLocked = reader["IsLocked"] != DBNull.Value && (bool)reader["IsLocked"]
+                        });
+                    }
                 }
-
-                reader.Close();
-
-
             }
 
-            catch (Exception ex)
-            {
-                // Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                connection.Close();
-            }
-
-            return dt;
-
+            return list;
         }
 
-        public static int AddNewTestAppointment(
-             int TestTypeID, int LocalDrivingLicenseApplicationID,
-             DateTime AppointmentDate, float PaidFees, int CreatedByUserID, int RetakeTestApplicationID)
+
+        public static int AddNewTestAppointment(TestAppointmentDTO DTO)
         {
             int TestAppointmentID = -1;
 
@@ -245,17 +240,17 @@ namespace dvld.data
             SqlCommand command = new SqlCommand(query, connection);
 
 
-            command.Parameters.AddWithValue("@TestTypeID", TestTypeID);
-            command.Parameters.AddWithValue("@LocalDrivingLicenseApplicationID", LocalDrivingLicenseApplicationID);
-            command.Parameters.AddWithValue("@AppointmentDate", AppointmentDate);
-            command.Parameters.AddWithValue("@PaidFees", PaidFees);
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
+            command.Parameters.AddWithValue("@TestTypeID", DTO.TestTypeID);
+            command.Parameters.AddWithValue("@LocalDrivingLicenseApplicationID",DTO.LocalDrivingLicenseApplicationID);
+            command.Parameters.AddWithValue("@AppointmentDate", DTO.AppointmentDate);
+            command.Parameters.AddWithValue("@PaidFees", DTO.PaidFees);
+            command.Parameters.AddWithValue("@CreatedByUserID", DTO.CreatedByUserID);
 
-            if (RetakeTestApplicationID == -1)
+            if (DTO.RetakeTestApplicationID == -1)
 
                 command.Parameters.AddWithValue("@RetakeTestApplicationID", DBNull.Value);
             else
-                command.Parameters.AddWithValue("@RetakeTestApplicationID", RetakeTestApplicationID);
+                command.Parameters.AddWithValue("@RetakeTestApplicationID", DTO.RetakeTestApplicationID);
 
 
 
