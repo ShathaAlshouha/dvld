@@ -63,10 +63,20 @@ namespace dvld.business
 
         private bool _AddNewTestAppointment()
         {
-            //call DataAccess Layer 
 
-            this.TestAppointmentID = clsTestAppointmentData.AddNewTestAppointment((int)this.TestTypeID, this.LocalDrivingLicenseApplicationID,
-                this.AppointmentDate, this.PaidFees, this.CreatedByUserID, this.RetakeTestApplicationID);
+            TestAppointmentDTO testAppointmentDTO = new TestAppointmentDTO
+            {
+                TestAppointmentID = this.TestAppointmentID,
+                TestTypeID = (int)this.TestTypeID,
+                LocalDrivingLicenseApplicationID = this.LocalDrivingLicenseApplicationID,
+                AppointmentDate = this.AppointmentDate,
+                PaidFees = this.PaidFees,
+                CreatedByUserID = this.CreatedByUserID,
+                IsLocked = this.IsLocked,
+                RetakeTestApplicationID = this.RetakeTestApplicationID
+            };
+
+            this.TestAppointmentID = clsTestAppointmentData.AddNewTestAppointment(testAppointmentDTO); 
 
             return (this.TestAppointmentID != -1);
         }
