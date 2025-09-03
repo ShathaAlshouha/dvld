@@ -1,4 +1,5 @@
-﻿using dvld.data;
+﻿using DTOs;
+using dvld.data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -72,23 +73,31 @@ namespace dvld.business
 
         private bool _UpdateTestAppointment()
         {
-            //call DataAccess Layer 
 
-            return clsTestAppointmentData.UpdateTestAppointment(this.TestAppointmentID, (int)this.TestTypeID, this.LocalDrivingLicenseApplicationID,
-                this.AppointmentDate, this.PaidFees, this.CreatedByUserID, this.IsLocked, this.RetakeTestApplicationID);
+            TestAppointmentDTO testAppointmentDTO = new TestAppointmentDTO
+            {
+                TestAppointmentID = this.TestAppointmentID,
+                TestTypeID = (int)this.TestTypeID,
+                LocalDrivingLicenseApplicationID = this.LocalDrivingLicenseApplicationID,
+                AppointmentDate = this.AppointmentDate,
+                PaidFees = this.PaidFees,
+                CreatedByUserID = this.CreatedByUserID,
+                IsLocked = this.IsLocked,
+                RetakeTestApplicationID = this.RetakeTestApplicationID
+
+            };
+
+            return clsTestAppointmentData.UpdateTestAppointment(testAppointmentDTO); 
         }
 
         public static clsTestAppointment Find(int TestAppointmentID)
         {
-            int TestTypeID = 1; int LocalDrivingLicenseApplicationID = -1;
-            DateTime AppointmentDate = DateTime.Now; float PaidFees = 0;
-            int CreatedByUserID = -1; bool IsLocked = false; int RetakeTestApplicationID = -1;
+            TestAppointmentDTO testAppointmentDTO = new TestAppointmentDTO();
 
-            if (clsTestAppointmentData.GetTestAppointmentInfoByID(TestAppointmentID, ref TestTypeID, ref LocalDrivingLicenseApplicationID,
-            ref AppointmentDate, ref PaidFees, ref CreatedByUserID, ref IsLocked, ref RetakeTestApplicationID))
+            if (clsTestAppointmentData.GetTestAppointmentInfoByID(TestAppointmentID, ref testAppointmentDTO))
 
-                return new clsTestAppointment(TestAppointmentID, (clsTestType.enTestType)TestTypeID, LocalDrivingLicenseApplicationID,
-             AppointmentDate, PaidFees, CreatedByUserID, IsLocked, RetakeTestApplicationID);
+                return new clsTestAppointment(TestAppointmentID, (clsTestType.enTestType)testAppointmentDTO.TestTypeID, testAppointmentDTO.LocalDrivingLicenseApplicationID,
+             testAppointmentDTO.AppointmentDate, testAppointmentDTO.PaidFees, testAppointmentDTO.CreatedByUserID, testAppointmentDTO.IsLocked, testAppointmentDTO.RetakeTestApplicationID);
             else
                 return null;
 
@@ -96,33 +105,30 @@ namespace dvld.business
 
         public static clsTestAppointment GetLastTestAppointment(int LocalDrivingLicenseApplicationID, clsTestType.enTestType TestTypeID)
         {
-            int TestAppointmentID = -1;
-            DateTime AppointmentDate = DateTime.Now; float PaidFees = 0;
-            int CreatedByUserID = -1; bool IsLocked = false; int RetakeTestApplicationID = -1;
+            TestAppointmentDTO dto = new TestAppointmentDTO(); 
 
-            if (clsTestAppointmentData.GetLastTestAppointment(LocalDrivingLicenseApplicationID, (int)TestTypeID,
-                ref TestAppointmentID, ref AppointmentDate, ref PaidFees, ref CreatedByUserID, ref IsLocked, ref RetakeTestApplicationID))
+            if (clsTestAppointmentData.GetLastTestAppointment(LocalDrivingLicenseApplicationID, (int)TestTypeID, ref dto ))
 
-                return new clsTestAppointment(TestAppointmentID, TestTypeID, LocalDrivingLicenseApplicationID,
-             AppointmentDate, PaidFees, CreatedByUserID, IsLocked, RetakeTestApplicationID);
+                return new clsTestAppointment(dto.TestAppointmentID, TestTypeID, LocalDrivingLicenseApplicationID,
+             dto.AppointmentDate, dto.PaidFees, dto.CreatedByUserID, dto.IsLocked, dto.RetakeTestApplicationID);
             else
                 return null;
 
         }
 
-        public static DataTable GetAllTestAppointments()
+        public static List<TestAppointmentDetailsDTO> GetAllTestAppointments()
         {
             return clsTestAppointmentData.GetAllTestAppointments();
 
         }
 
-        public DataTable GetApplicationTestAppointmentsPerTestType(clsTestType.enTestType TestTypeID)
+        public List<TestAppointmentViewDTO> GetApplicationTestAppointmentsPerTestType(clsTestType.enTestType TestTypeID)
         {
             return clsTestAppointmentData.GetApplicationTestAppointmentsPerTestType(this.LocalDrivingLicenseApplicationID, (int)TestTypeID);
 
         }
 
-        public static DataTable GetApplicationTestAppointmentsPerTestType(int LocalDrivingLicenseApplicationID, clsTestType.enTestType TestTypeID)
+        public static List<TestAppointmentViewDTO> GetApplicationTestAppointmentsPerTestType(int LocalDrivingLicenseApplicationID, clsTestType.enTestType TestTypeID)
         {
             return clsTestAppointmentData.GetApplicationTestAppointmentsPerTestType(LocalDrivingLicenseApplicationID, (int)TestTypeID);
 

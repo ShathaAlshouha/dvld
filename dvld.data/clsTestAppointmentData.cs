@@ -284,9 +284,7 @@ namespace dvld.data
 
         }
 
-        public static bool UpdateTestAppointment(int TestAppointmentID, int TestTypeID, int LocalDrivingLicenseApplicationID,
-             DateTime AppointmentDate, float PaidFees,
-             int CreatedByUserID, bool IsLocked, int RetakeTestApplicationID)
+        public static bool UpdateTestAppointment(TestAppointmentDTO DTO)
         {
 
             int rowsAffected = 0;
@@ -304,19 +302,19 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@TestAppointmentID", TestAppointmentID);
-            command.Parameters.AddWithValue("@TestTypeID", TestTypeID);
-            command.Parameters.AddWithValue("@LocalDrivingLicenseApplicationID", LocalDrivingLicenseApplicationID);
-            command.Parameters.AddWithValue("@AppointmentDate", AppointmentDate);
-            command.Parameters.AddWithValue("@PaidFees", PaidFees);
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
-            command.Parameters.AddWithValue("@IsLocked", IsLocked);
+            command.Parameters.AddWithValue("@TestAppointmentID", DTO.TestAppointmentID);
+            command.Parameters.AddWithValue("@TestTypeID", DTO.TestTypeID);
+            command.Parameters.AddWithValue("@LocalDrivingLicenseApplicationID", DTO.LocalDrivingLicenseApplicationID);
+            command.Parameters.AddWithValue("@AppointmentDate",DTO. AppointmentDate);
+            command.Parameters.AddWithValue("@PaidFees", DTO.PaidFees);
+            command.Parameters.AddWithValue("@CreatedByUserID", DTO.CreatedByUserID);
+            command.Parameters.AddWithValue("@IsLocked", DTO.IsLocked);
 
-            if (RetakeTestApplicationID == -1)
+            if (DTO.RetakeTestApplicationID == -1)
 
                 command.Parameters.AddWithValue("@RetakeTestApplicationID", DBNull.Value);
             else
-                command.Parameters.AddWithValue("@RetakeTestApplicationID", RetakeTestApplicationID);
+                command.Parameters.AddWithValue("@RetakeTestApplicationID", DTO.RetakeTestApplicationID);
 
 
 
