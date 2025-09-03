@@ -6,13 +6,12 @@ using System.Diagnostics.SymbolStore;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using DTOs;
 namespace dvld.data
 {
     public class clsTestTypeData
     {
-        public static bool GetTestTypeInfoByID(int TestTypeID,
-                   ref string TestTypeTitle, ref string TestDescription, ref float TestFees)
+        public static bool GetTestTypeInfoByID(int TestTypeID,ref testTypeDTO testTypeDTO)
         {
             bool isFound = false;
 
@@ -35,9 +34,9 @@ namespace dvld.data
                     // The record was found
                     isFound = true;
 
-                    TestTypeTitle = (string)reader["TestTypeTitle"];
-                    TestDescription = (string)reader["TestTypeDescription"];
-                    TestFees = Convert.ToSingle(reader["TestTypeFees"]);
+                    testTypeDTO.TestTypeTitle = (string)reader["TestTypeTitle"];
+                    testTypeDTO.Description = (string)reader["TestTypeDescription"];
+                    testTypeDTO.TestFees = Convert.ToSingle(reader["TestTypeFees"]);
 
                 }
                 else
@@ -63,10 +62,10 @@ namespace dvld.data
             return isFound;
         }
 
-        public static DataTable GetAllTestTypes()
+        public static List<testTypeDTO> GetAllTestTypes()
         {
 
-            DataTable dt = new DataTable();
+          List<testTypeDTO> list = new List<testTypeDTO>();
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
             string query = "SELECT * FROM TestTypes order by TestTypeID";
@@ -79,10 +78,17 @@ namespace dvld.data
 
                 SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.HasRows)
+                while (reader.Read())
+                    
 
                 {
-                    dt.Load(reader);
+                    list.Add(new testTypeDTO
+                       (
+                           (int)reader["TestTypeID"],
+                           (string)reader["TestTypeTitle"],
+                           (string)reader["TestTypeDescription"],
+                           Convert.ToSingle(reader["TestTypeFees"])
+                       )); 
                 }
 
                 reader.Close();
@@ -99,11 +105,11 @@ namespace dvld.data
                 connection.Close();
             }
 
-            return dt;
+            return list;
 
         }
 
-        public static int AddNewTestType(string Title, string Description, float Fees)
+        public static int AddNewTestType(testTypeDTO newDTO )
         {
             int TestTypeID = -1;
 
@@ -116,9 +122,9 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@TestTypeTitle", Title);
-            command.Parameters.AddWithValue("@TestTypeDescription", Description);
-            command.Parameters.AddWithValue("@ApplicationFees", Fees);
+            command.Parameters.AddWithValue("@TestTypeTitle", newDTO.TestTypeTitle);
+            command.Parameters.AddWithValue("@TestTypeDescription", newDTO.Description);
+            command.Parameters.AddWithValue("@ApplicationFees", newDTO.TestFees);
 
             try
             {
@@ -148,7 +154,7 @@ namespace dvld.data
 
         }
 
-        public static bool UpdateTestType(int TestTypeID, string Title, string Description, float Fees)
+        public static bool UpdateTestType(testTypeDTO testDTO)
         {
 
             int rowsAffected = 0;
@@ -162,10 +168,10 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@TestTypeID", TestTypeID);
-            command.Parameters.AddWithValue("@TestTypeTitle", Title);
-            command.Parameters.AddWithValue("@TestTypeDescription", Description);
-            command.Parameters.AddWithValue("@TestTypeFees", Fees);
+            command.Parameters.AddWithValue("@TestTypeID", testDTO.TestTypeID);
+            command.Parameters.AddWithValue("@TestTypeTitle", testDTO.TestTypeTitle);
+            command.Parameters.AddWithValue("@TestTypeDescription", testDTO.Description);
+            command.Parameters.AddWithValue("@TestTypeFees",testDTO.TestFees);
 
             try
             {

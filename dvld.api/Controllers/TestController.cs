@@ -22,6 +22,7 @@ namespace dvld.api.Controllers
                 return NotFound("Test not found");
             TestDTO testDTO = new TestDTO
             {
+                TestID = test.TestID,
                 TestAppointmentID = test.TestAppointmentID,
                 TestResult = test.TestResult,
                 Notes = test.Notes,

@@ -32,7 +32,7 @@ namespace dvld.data
                 {
 
                     isFound = true;
-
+                    testDTO.TestID = (int)reader["TestID"];
                     testDTO.TestAppointmentID = (int)reader["TestAppointmentID"];
                     testDTO.TestResult = (bool)reader["TestResult"];
                     if (reader["Notes"] == DBNull.Value)
@@ -149,7 +149,7 @@ namespace dvld.data
 
                 SqlDataReader reader = command.ExecuteReader();
 
-                while (reader.HasRows)
+                while (reader.Read())
                 {
                     list.Add(new TestDTO
                     {

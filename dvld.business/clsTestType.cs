@@ -1,4 +1,5 @@
-﻿using dvld.data;
+﻿using DTOs;
+using dvld.data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -43,33 +44,44 @@ namespace dvld.business
 
         private bool _AddNewTestType()
         {
-           
+            testTypeDTO newtestType = new testTypeDTO
+            {
+                TestFees = this.Fees,
+                TestTypeTitle = this.Title,
+                Description = this.Description
+            };
 
-            this.ID = (clsTestType.enTestType)clsTestTypeData.AddNewTestType(this.Title, this.Description, this.Fees);
+            this.ID = (clsTestType.enTestType)clsTestTypeData.AddNewTestType(newtestType);
 
             return (this.Title != "");
         }
 
         private bool _UpdateTestType()
         {
-     
+            testTypeDTO testTypeDTO = new testTypeDTO
+            {
+                TestFees = this.Fees,
+                TestTypeTitle = this.Title,
+                Description = this.Description
+            };
 
-            return clsTestTypeData.UpdateTestType((int)this.ID, this.Title, this.Description, this.Fees);
+
+            return clsTestTypeData.UpdateTestType(testTypeDTO); 
         }
 
         public static clsTestType Find(clsTestType.enTestType TestTypeID)
         {
-            string Title = "", Description = ""; float Fees = 0;
+           testTypeDTO DTO = new testTypeDTO();
 
-            if (clsTestTypeData.GetTestTypeInfoByID((int)TestTypeID, ref Title, ref Description, ref Fees))
+            if (clsTestTypeData.GetTestTypeInfoByID((int)TestTypeID, ref DTO))
 
-                return new clsTestType(TestTypeID, Title, Description, Fees);
+                return new clsTestType(TestTypeID, DTO.TestTypeTitle, DTO.Description, DTO.TestFees); 
             else
                 return null;
 
         }
 
-        public static DataTable GetAllTestTypes()
+        public static List<testTypeDTO> GetAllTestTypes()
         {
             return clsTestTypeData.GetAllTestTypes();
 
