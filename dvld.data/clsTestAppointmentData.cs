@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DTOs;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -10,9 +11,7 @@ namespace dvld.data
 {
     public class clsTestAppointmentData
     {
-        public static bool GetTestAppointmentInfoByID(int TestAppointmentID,
-            ref int TestTypeID, ref int LocalDrivingLicenseApplicationID,
-            ref DateTime AppointmentDate, ref float PaidFees, ref int CreatedByUserID, ref bool IsLocked, ref int RetakeTestApplicationID)
+        public static bool GetTestAppointmentInfoByID(int TestAppointmentID, ref TestAppointmentDTOcs DTO)
         {
             bool isFound = false;
 
@@ -34,17 +33,17 @@ namespace dvld.data
 
                     // The record was found
                     isFound = true;
-                    TestTypeID = (int)reader["TestTypeID"];
-                    LocalDrivingLicenseApplicationID = (int)reader["LocalDrivingLicenseApplicationID"];
-                    AppointmentDate = (DateTime)reader["AppointmentDate"];
-                    CreatedByUserID = (int)reader["CreatedByUserID"];
-                    PaidFees = Convert.ToSingle(reader["PaidFees"]);
-                    IsLocked = (bool)reader["IsLocked"];
+                    DTO.TestTypeID = (int)reader["TestTypeID"];
+                    DTO.LocalDrivingLicenseApplicationID = (int)reader["LocalDrivingLicenseApplicationID"];
+                    DTO.AppointmentDate = (DateTime)reader["AppointmentDate"];
+                    DTO.CreatedByUserID = (int)reader["CreatedByUserID"];
+                    DTO.PaidFees = Convert.ToSingle(reader["PaidFees"]);
+                    DTO.IsLocked = (bool)reader["IsLocked"];
 
                     if (reader["RetakeTestApplicationID"] == DBNull.Value)
-                        RetakeTestApplicationID = -1;
+                        DTO.RetakeTestApplicationID = -1;
                     else
-                        RetakeTestApplicationID = (int)reader["RetakeTestApplicationID"];
+                        DTO.RetakeTestApplicationID = (int)reader["RetakeTestApplicationID"];
 
                 }
                 else
