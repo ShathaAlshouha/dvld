@@ -77,6 +77,79 @@ namespace dvld.api.Controllers
             };
             return Ok(DTO);
         }
-    
+
+        [HttpPost("Create")]
+        public ActionResult<TestAppointmentDTO> CreateTestAppointment([FromBody] TestAppointmentDTO appointmentDTO)
+        {
+
+            if (appointmentDTO == null)
+            {
+                return BadRequest("Invalid appointment data.");
+            }
+            clsTestAppointment newAppointment = new clsTestAppointment
+            {
+                AppointmentDate = appointmentDTO.AppointmentDate,
+                TestTypeID = (clsTestType.enTestType)appointmentDTO.TestTypeID,
+                LocalDrivingLicenseApplicationID = appointmentDTO.LocalDrivingLicenseApplicationID,
+                PaidFees = appointmentDTO.PaidFees,
+                CreatedByUserID = appointmentDTO.CreatedByUserID,
+                IsLocked = appointmentDTO.IsLocked,
+                RetakeTestApplicationID = appointmentDTO.RetakeTestApplicationID,
+            };
+            if (!newAppointment.Save())
+            {
+                return BadRequest("Failed to create appointment.");
+            }
+            TestAppointmentDTO testAppointmentDTO = new TestAppointmentDTO
+            {
+                TestAppointmentID = newAppointment.TestAppointmentID,
+                AppointmentDate = newAppointment.AppointmentDate,
+                TestTypeID = (int)newAppointment.TestTypeID,
+                LocalDrivingLicenseApplicationID = newAppointment.LocalDrivingLicenseApplicationID,
+                PaidFees = newAppointment.PaidFees,
+                CreatedByUserID = newAppointment.CreatedByUserID,
+                IsLocked = newAppointment.IsLocked,
+                RetakeTestApplicationID = newAppointment.RetakeTestApplicationID,
+            };
+            return CreatedAtAction(nameof(GetAppointmentByID), new { id = testAppointmentDTO.TestAppointmentID }, testAppointmentDTO);
+        }
+
+        [HttpPut ("Update/{id}")]
+        public ActionResult<TestAppointmentDTO> UpdateTestAppointment(int id, [FromBody] TestAppointmentDTO appointmentDTO)
+        {
+            if (id <= 0 || appointmentDTO == null || id != appointmentDTO.TestAppointmentID)
+            {
+                return BadRequest("Invalid data.");
+            }
+            clsTestAppointment existingAppointment = clsTestAppointment.Find(id);
+            if (existingAppointment == null)
+            {
+                return NotFound($"Appointment with ID {id} not found.");
+            }
+            existingAppointment.AppointmentDate = appointmentDTO.AppointmentDate;
+            existingAppointment.TestTypeID = (clsTestType.enTestType)appointmentDTO.TestTypeID;
+            existingAppointment.LocalDrivingLicenseApplicationID = appointmentDTO.LocalDrivingLicenseApplicationID;
+            existingAppointment.PaidFees = appointmentDTO.PaidFees;
+            existingAppointment.CreatedByUserID = appointmentDTO.CreatedByUserID;
+            existingAppointment.IsLocked = appointmentDTO.IsLocked;
+            existingAppointment.RetakeTestApplicationID = appointmentDTO.RetakeTestApplicationID;
+
+            if (!existingAppointment.Save())
+            {
+                return BadRequest("Failed to update appointment.");
+            }
+            TestAppointmentDTO updatedDTO = new TestAppointmentDTO
+            {
+                TestAppointmentID = existingAppointment.TestAppointmentID,
+                AppointmentDate = existingAppointment.AppointmentDate,
+                TestTypeID = (int)existingAppointment.TestTypeID,
+                LocalDrivingLicenseApplicationID = existingAppointment.LocalDrivingLicenseApplicationID,
+                PaidFees = existingAppointment.PaidFees,
+                CreatedByUserID = existingAppointment.CreatedByUserID,
+                IsLocked = existingAppointment.IsLocked,
+                RetakeTestApplicationID = existingAppointment.RetakeTestApplicationID,
+            };
+            return Ok(updatedDTO);
+        }
     }
 }
