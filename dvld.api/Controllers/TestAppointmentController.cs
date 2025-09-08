@@ -51,7 +51,32 @@ namespace dvld.api.Controllers
             };
             return Ok(DTO);
         }
-    
+
+        [HttpGet("LastTestAppointment/{LocalApplicationID}/TestType/{testTypeID}")]
+        public ActionResult<TestAppointmentDTO> GetLastTestAppointment(int LocalApplicationID, int testTypeID)
+        {
+            if (LocalApplicationID <= 0 || testTypeID <= 0)
+            {
+                return BadRequest("Invalid parameters.");
+            }
+            clsTestAppointment appointment = clsTestAppointment.GetLastTestAppointment(LocalApplicationID, (clsTestType.enTestType)testTypeID);
+            if (appointment == null)
+            {
+                return NotFound("No appointment found.");
+            }
+            TestAppointmentDTO DTO = new TestAppointmentDTO
+            {
+                TestAppointmentID = appointment.TestAppointmentID,
+                AppointmentDate = appointment.AppointmentDate,
+                TestTypeID = (int)appointment.TestTypeID,
+                LocalDrivingLicenseApplicationID = appointment.LocalDrivingLicenseApplicationID,
+                PaidFees = appointment.PaidFees,
+                CreatedByUserID = appointment.CreatedByUserID,
+                IsLocked = appointment.IsLocked,
+                RetakeTestApplicationID = appointment.RetakeTestApplicationID,
+            };
+            return Ok(DTO);
+        }
     
     }
 }
