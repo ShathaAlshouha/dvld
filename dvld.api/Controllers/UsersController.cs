@@ -23,6 +23,29 @@ namespace dvld.api.Controllers
 
         }
 
+        [HttpGet("GetByPersonID/{personID}")]
+        public ActionResult<UserDTO> FindByPersonID(int personID)
+        {
+            if (personID <= 0)
+                return BadRequest("Invalid UserID");
+            var user = business.clsUser.FindByPersonID(personID);
+            if (user == null)
+                return NotFound();
+            return Ok(user);
+
+        }
+
+        [HttpGet("{password}/FindByUsernameAndPassword/{username}")]
+        public ActionResult<UserDTO> FindByUsernameAndPassword(string username ,string password)
+        {
+            if (username ==null ||password==null)
+                return BadRequest("Invalid UserID");
+            var user = business.clsUser.FindByUsernameAndPassword(username, password); 
+            if (user == null)
+                return NotFound();
+            return Ok(user);
+
+        }
 
     }
 }
