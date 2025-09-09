@@ -87,7 +87,7 @@ namespace dvld.business
 
         }
 
-        public static List<DriverDTO> GetAllDrivers()
+        public static List<Driver_ViewDTO> GetAllDrivers()
         {
             return clsDriverData.GetAllDrivers();
 

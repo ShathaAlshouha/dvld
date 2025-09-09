@@ -31,12 +31,10 @@ namespace dvld.data
                 if (reader.Read())
                 {
                     isFound = true;
-
+                    driverDTO.DriverID = (int)reader["DriverID"];
                     driverDTO.PersonID = (int)reader["PersonID"];
                     driverDTO.CreatedByUserID = (int)reader["CreatedByUserID"];
                     driverDTO.CreatedDate = (DateTime)reader["CreatedDate"];
-
-
                 }
                 else
                 {
@@ -83,7 +81,7 @@ namespace dvld.data
 
                     // The record was found
                     isFound = true;
-
+                    driverDTO.PersonID = (int)reader["PersonID"];
                     driverDTO.DriverID = (int)reader["DriverID"];
                     driverDTO.CreatedByUserID = (int)reader["CreatedByUserID"];
                    driverDTO.CreatedDate = (DateTime)reader["CreatedDate"];
@@ -113,10 +111,10 @@ namespace dvld.data
         }
 
 
-        public static List<DriverDTO> GetAllDrivers()
+        public static List<Driver_ViewDTO> GetAllDrivers()
         {
 
-            List<DriverDTO> list = new List<DriverDTO>(); 
+            List<Driver_ViewDTO> list = new List<Driver_ViewDTO>(); 
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
             string query = "SELECT * FROM Drivers_View order by FullName";
@@ -132,11 +130,13 @@ namespace dvld.data
                 while (reader.Read())
 
                 {
-                    list.Add(new DriverDTO
+                    list.Add(new Driver_ViewDTO
                     {
                         DriverID = (int)reader["DriverID"],
                         PersonID = (int)reader["PersonID"],
-                        CreatedByUserID = (int)reader["CreatedByUserID"],
+                        NationalNo = (string)reader["NationalNo"],
+                        FullName = (string)reader["FullName"],
+                        NumberOfActiveLicenses = (int)reader["NumberOfActiveLicenses"],
                         CreatedDate = (DateTime)reader["CreatedDate"]
 
                     }); 

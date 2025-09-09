@@ -28,4 +28,16 @@ namespace DTOs
             this.CreatedDate = CreatedDate;
         }
     }
+
+
+    public class Driver_ViewDTO
+    {
+        public int DriverID { set; get; }
+        public int PersonID { set; get; }
+        public string NationalNo { set; get; }
+        public string FullName { set; get; }
+        public DateTime CreatedDate { get; set; }
+        public int NumberOfActiveLicenses { get; set; }
+            
+    }
 }

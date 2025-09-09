@@ -12,6 +12,26 @@ namespace dvld.api.Controllers
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public class DriversController : ControllerBase
     {
+        [HttpGet("GetByPersonID/{PersonID}")]
+        public IActionResult GetDriverByPersonID(int PersonID)
+        {
+            DriverDTO driverDTO = new DriverDTO();
+            if (PersonID <= 0)
+            {
+                return BadRequest("Invalid DriverID");
+            }
+            bool isFound = clsDriverData.GetDriverInfoByPersonID(PersonID, ref driverDTO);
+
+            if (isFound)
+            {
+                return Ok(driverDTO);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         [HttpGet("{DriverID}")]
         public IActionResult GetDriverByID(int DriverID)
         {
@@ -31,9 +51,8 @@ namespace dvld.api.Controllers
                 return NotFound();
             }
         }
-
         [HttpGet("AllDrivers")]
-        public ActionResult<IEnumerable<DriverDTO>> GetAllDrivers()
+        public ActionResult<IEnumerable<Driver_ViewDTO>> GetAllDrivers()
         {
             var drivers = clsDriver.GetAllDrivers();
             if (drivers == null)
