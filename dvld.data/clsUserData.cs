@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DTOs;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -12,8 +13,7 @@ namespace dvld.data
 {
     public class clsUserData
     {
-        public static bool GetUserInfoByUserID(int UserID,ref int PersonID ,ref string UserName
-           ,ref string Password ,ref bool IsActive)
+        public static bool GetUserInfoByUserID(int UserID,ref UserDTO userDTO)
         {
             bool isFound = false;
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
@@ -30,10 +30,10 @@ namespace dvld.data
                 if (reader.Read())
                 {
                     isFound = true;
-                    PersonID = (int)reader["PersonID"];
-                    UserName = (string)reader["UserName"];
-                    Password = (string)reader["Password"];
-                    IsActive = (bool)reader["IsActive"];
+                    userDTO.PersonID = (int)reader["PersonID"];
+                    userDTO.UserName = (string)reader["UserName"];
+                    userDTO.Password = (string)reader["Password"];
+                    userDTO.IsActive = (bool)reader["IsActive"];
 
 
                 }
@@ -60,8 +60,7 @@ namespace dvld.data
         }
 
 
-        public static bool GetUserInfoByPersonID(int PersonID, ref int UserID, ref string UserName
-           , ref string Password, ref bool IsActive)
+        public static bool GetUserInfoByPersonID(int PersonID, ref UserDTO userDTO)
         {
             bool isFound = false;
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
@@ -75,10 +74,10 @@ namespace dvld.data
                 if (reader.Read())
                 {
                     isFound = true;
-                    UserID = (int)reader["UserID"];
-                    UserName = (string)reader["UserName"];
-                    Password = (string)reader["Password"];
-                    IsActive = (bool)reader["IsActive"];
+                    userDTO.UserID = (int)reader["UserID"];
+                    userDTO.UserName = (string)reader["UserName"];
+                    userDTO.Password = (string)reader["Password"];
+                    userDTO.IsActive = (bool)reader["IsActive"];
 
                 }
                 else
@@ -103,8 +102,7 @@ namespace dvld.data
 
         }
 
-        public static bool GetUserInfoByUsernameAndPassword(string UserName, string Password,
-                ref int UserID, ref int PersonID, ref bool IsActive)
+        public static bool GetUserInfoByUsernameAndPassword(string UserName, string Password,ref UserDTO userDTO)
         {
             bool isFound = false;
 
@@ -127,11 +125,11 @@ namespace dvld.data
                 {
                     // The record was found
                     isFound = true;
-                    UserID = (int)reader["UserID"];
-                    PersonID = (int)reader["PersonID"];
-                    UserName = (string)reader["UserName"];
-                    Password = (string)reader["Password"];
-                    IsActive = (bool)reader["IsActive"];
+                    userDTO.UserID = (int)reader["UserID"];
+                    userDTO.PersonID = (int)reader["PersonID"];
+                    userDTO.UserName = (string)reader["UserName"];
+                    userDTO.Password = (string)reader["Password"];
+                    userDTO.IsActive = (bool)reader["IsActive"];
 
 
                 }
@@ -159,8 +157,7 @@ namespace dvld.data
             return isFound;
         }
 
-        public static int AddNewUser(int PersonID, string UserName,
-                   string Password, bool IsActive)
+        public static int AddNewUser(UserDTO userDTO)
         {
             //this function will return the new person id if succeeded and -1 if not.
             int UserID = -1;
@@ -172,11 +169,11 @@ namespace dvld.data
                              SELECT SCOPE_IDENTITY();";
 
             SqlCommand command = new SqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("@PersonID", PersonID);
-            command.Parameters.AddWithValue("@UserName", UserName);
-            command.Parameters.AddWithValue("@Password", Password);
-            command.Parameters.AddWithValue("@IsActive", IsActive);
+           
+            command.Parameters.AddWithValue("@PersonID", userDTO.PersonID);
+            command.Parameters.AddWithValue("@UserName", userDTO.UserName);
+            command.Parameters.AddWithValue("@Password", userDTO.Password);
+            command.Parameters.AddWithValue("@IsActive", userDTO.IsActive);
 
             try
             {
@@ -205,8 +202,7 @@ namespace dvld.data
         }
 
 
-        public static bool UpdateUser(int UserID, int PersonID, string UserName,
-     string Password, bool IsActive)
+        public static bool UpdateUser(UserDTO userDTO)
         {
 
             int rowsAffected = 0;
@@ -221,13 +217,13 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@PersonID", PersonID);
-            command.Parameters.AddWithValue("@UserName", UserName);
-            command.Parameters.AddWithValue("@Password", Password);
-            command.Parameters.AddWithValue("@IsActive", IsActive);
-            command.Parameters.AddWithValue("@UserID", UserID);
+            command.Parameters.AddWithValue("@PersonID", userDTO.PersonID);
+            command.Parameters.AddWithValue("@UserName", userDTO.UserName);
+            command.Parameters.AddWithValue("@Password", userDTO.Password);
+            command.Parameters.AddWithValue("@IsActive", userDTO.IsActive);
+            command.Parameters.AddWithValue("@UserID", userDTO.UserID);
 
-
+          
             try
             {
                 connection.Open();
@@ -249,10 +245,10 @@ namespace dvld.data
         }
 
 
-        public static DataTable GetAllUsers()
+        public static List<UserDetailsDTO> GetAllUsers()
         {
-            DataTable dt = new DataTable();
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
+            List<UserDetailsDTO> userDetailsDTOs = new List<UserDetailsDTO>();
+              SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
             string query = @"SELECT  Users.UserID, Users.PersonID,
                             FullName = People.FirstName + ' ' + People.SecondName + ' ' + ISNULL( People.ThirdName,'') +' ' + People.LastName,
@@ -265,18 +261,21 @@ namespace dvld.data
             try
             {
                 connection.Open();
-
                 SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.HasRows)
-
+                while (reader.Read())
                 {
-                    dt.Load(reader);
+                    userDetailsDTOs.Add(new UserDetailsDTO
+                    {
+                        UserID = (int)reader["UserID"],
+                        PersonID = (int)reader["PersonID"],
+                        FullName = (string)reader["FullName"],
+                        UserName = (string)reader["UserName"],
+                        IsActive = (bool)reader["IsActive"]
+                    });
                 }
 
                 reader.Close();
-
-
             }
 
             catch (Exception ex)
@@ -288,7 +287,7 @@ namespace dvld.data
                 connection.Close();
             }
 
-            return dt;
+            return userDetailsDTOs; 
 
 
         }
@@ -320,13 +319,9 @@ namespace dvld.data
             }
             finally
             {
-
                 connection.Close();
-
             }
-
             return (rowsAffected > 0);
-
         }
 
 

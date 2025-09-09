@@ -1,4 +1,5 @@
-﻿using dvld.data;
+﻿using DTOs;
+using dvld.data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -48,63 +49,68 @@ namespace dvld.business
 
         private bool _AddNewUser()
         {
-            //call DataAccess Layer 
+            UserDTO user = new UserDTO
+            {
+                UserID = this.UserID,
+                PersonID = this.PersonID,
+                UserName = this.UserName,
+                Password = this.Password,
+                IsActive = this.IsActive
 
-            this.UserID = clsUserData.AddNewUser(this.PersonID, this.UserName,
-                this.Password, this.IsActive);
+            }; 
+
+            this.UserID = clsUserData.AddNewUser(user);
 
             return (this.UserID != -1);
         }
         private bool _UpdateUser()
         {
-            //call DataAccess Layer 
 
-            return clsUserData.UpdateUser(this.UserID, this.PersonID, this.UserName,
-                this.Password, this.IsActive);
+            UserDTO user = new UserDTO
+            {
+                UserID = this.UserID,
+                PersonID = this.PersonID,
+                UserName = this.UserName,
+                Password = this.Password,
+                IsActive = this.IsActive
+
+            };
+            return clsUserData.UpdateUser(user); 
         }
         public static clsUser FindByUserID(int UserID)
         {
-            int PersonID = -1;
-            string UserName = "", Password = "";
-            bool IsActive = false;
+          UserDTO user = new UserDTO();
 
-            bool IsFound = clsUserData.GetUserInfoByUserID
-                                (UserID, ref PersonID, ref UserName, ref Password, ref IsActive);
+            bool IsFound = clsUserData.GetUserInfoByUserID(UserID, ref user);
 
             if (IsFound)
-                //we return new object of that User with the right data
-                return new clsUser(UserID, PersonID, UserName, Password, IsActive);
+               
+                return new clsUser(UserID, user.PersonID,user. UserName, user.Password, user.IsActive);
             else
                 return null;
         }
         public static clsUser FindByPersonID(int PersonID)
         {
-            int UserID = -1;
-            string UserName = "", Password = "";
-            bool IsActive = false;
+            UserDTO user = new UserDTO();
 
             bool IsFound = clsUserData.GetUserInfoByPersonID
-                                (PersonID, ref UserID, ref UserName, ref Password, ref IsActive);
+                                (PersonID, ref user);
 
             if (IsFound)
-                //we return new object of that User with the right data
-                return new clsUser(UserID, UserID, UserName, Password, IsActive);
+                
+                return new clsUser(user.UserID, user.PersonID, user.UserName, user.Password, user.IsActive);
             else
                 return null;
         }
         public static clsUser FindByUsernameAndPassword(string UserName, string Password)
         {
-            int UserID = -1;
-            int PersonID = -1;
-
-            bool IsActive = false;
-
-            bool IsFound = clsUserData.GetUserInfoByUsernameAndPassword
-                                (UserName, Password, ref UserID, ref PersonID, ref IsActive);
+         
+            UserDTO user = new UserDTO();
+            bool IsFound = clsUserData.GetUserInfoByUsernameAndPassword (UserName, Password, ref user);
 
             if (IsFound)
-                //we return new object of that User with the right data
-                return new clsUser(UserID, PersonID, UserName, Password, IsActive);
+                
+                return new clsUser(user.UserID, user.PersonID, UserName, Password, user.IsActive);
             else
                 return null;
         }
@@ -134,7 +140,7 @@ namespace dvld.business
             return false;
         }
 
-        public static DataTable GetAllUsers()
+        public static List<UserDetailsDTO> GetAllUsers()
         {
             return clsUserData.GetAllUsers();
         }
