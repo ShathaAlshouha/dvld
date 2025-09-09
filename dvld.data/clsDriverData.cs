@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DTOs;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -10,8 +11,7 @@ namespace dvld.data
 {
     public class clsDriverData
     {
-        public static bool GetDriverInfoByDriverID(int DriverID,
-               ref int PersonID, ref int CreatedByUserID, ref DateTime CreatedDate)
+        public static bool GetDriverInfoByDriverID(int DriverID,ref DriverDTO driverDTO)
         {
             bool isFound = false;
 
@@ -32,9 +32,9 @@ namespace dvld.data
                 {
                     isFound = true;
 
-                    PersonID = (int)reader["PersonID"];
-                    CreatedByUserID = (int)reader["CreatedByUserID"];
-                    CreatedDate = (DateTime)reader["CreatedDate"];
+                    driverDTO.PersonID = (int)reader["PersonID"];
+                    driverDTO.CreatedByUserID = (int)reader["CreatedByUserID"];
+                    driverDTO.CreatedDate = (DateTime)reader["CreatedDate"];
 
 
                 }
@@ -61,8 +61,7 @@ namespace dvld.data
         }
 
 
-        public static bool GetDriverInfoByPersonID(int PersonID, ref int DriverID,
-                   ref int CreatedByUserID, ref DateTime CreatedDate)
+        public static bool GetDriverInfoByPersonID(int PersonID, ref DriverDTO driverDTO)
         {
             bool isFound = false;
 
@@ -85,9 +84,9 @@ namespace dvld.data
                     // The record was found
                     isFound = true;
 
-                    DriverID = (int)reader["DriverID"];
-                    CreatedByUserID = (int)reader["CreatedByUserID"];
-                    CreatedDate = (DateTime)reader["CreatedDate"];
+                    driverDTO.DriverID = (int)reader["DriverID"];
+                    driverDTO.CreatedByUserID = (int)reader["CreatedByUserID"];
+                   driverDTO.CreatedDate = (DateTime)reader["CreatedDate"];
 
                 }
                 else
@@ -114,10 +113,10 @@ namespace dvld.data
         }
 
 
-        public static DataTable GetAllDrivers()
+        public static List<DriverDTO> GetAllDrivers()
         {
 
-            DataTable dt = new DataTable();
+            List<DriverDTO> list = new List<DriverDTO>(); 
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
             string query = "SELECT * FROM Drivers_View order by FullName";
@@ -130,10 +129,17 @@ namespace dvld.data
 
                 SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.HasRows)
+                while (reader.Read())
 
                 {
-                    dt.Load(reader);
+                    list.Add(new DriverDTO
+                    {
+                        DriverID = (int)reader["DriverID"],
+                        PersonID = (int)reader["PersonID"],
+                        CreatedByUserID = (int)reader["CreatedByUserID"],
+                        CreatedDate = (DateTime)reader["CreatedDate"]
+
+                    }); 
                 }
 
                 reader.Close();
@@ -150,7 +156,7 @@ namespace dvld.data
                 connection.Close();
             }
 
-            return dt;
+            return list; 
 
         }
 

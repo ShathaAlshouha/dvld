@@ -1,4 +1,5 @@
-﻿using dvld.data;
+﻿using DTOs;
+using dvld.data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -63,30 +64,30 @@ namespace dvld.business
         public static clsDriver FindByDriverID(int DriverID)
         {
 
-            int PersonID = -1; int CreatedByUserID = -1; DateTime CreatedDate = DateTime.Now;
+        DriverDTO driverDTO = new DriverDTO();
 
-            if (clsDriverData.GetDriverInfoByDriverID(DriverID, ref PersonID, ref CreatedByUserID, ref CreatedDate))
+            if (clsDriverData.GetDriverInfoByDriverID(DriverID, ref driverDTO))
 
-                return new clsDriver(DriverID, PersonID, CreatedByUserID, CreatedDate);
+                return new clsDriver(DriverID, driverDTO.PersonID, driverDTO.CreatedByUserID, driverDTO.CreatedDate);
             else
-                return null;
+                return null; 
 
         }
 
         public static clsDriver FindByPersonID(int PersonID)
         {
 
-            int DriverID = -1; int CreatedByUserID = -1; DateTime CreatedDate = DateTime.Now;
+            DriverDTO driverDTO = new DriverDTO();
 
-            if (clsDriverData.GetDriverInfoByPersonID(PersonID, ref DriverID, ref CreatedByUserID, ref CreatedDate))
+            if (clsDriverData.GetDriverInfoByPersonID(PersonID,ref driverDTO))
 
-                return new clsDriver(DriverID, PersonID, CreatedByUserID, CreatedDate);
+                return new clsDriver(driverDTO.DriverID, PersonID, driverDTO.CreatedByUserID, driverDTO.CreatedDate);
             else
                 return null;
 
         }
 
-        public static DataTable GetAllDrivers()
+        public static List<DriverDTO> GetAllDrivers()
         {
             return clsDriverData.GetAllDrivers();
 
