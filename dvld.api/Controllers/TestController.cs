@@ -31,7 +31,7 @@ namespace dvld.api.Controllers
             return Ok(testDTO);
         }
 
-        [HttpGet("FindByPerson_TestType_LicenseClass/{personId}/{TestType}/{LicenseClass}")]
+        [HttpGet("FindByPerson_TestType_LicenseClass/{personId}/{TestTypeTitle}/{LicenseClass}")]
         public ActionResult<TestDTO> FindByPerson_TestType_LicenseClass(int personId, int TestType, int LicenseClass)
         {
             if (personId <= 0)

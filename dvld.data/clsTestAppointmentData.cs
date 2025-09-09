@@ -161,11 +161,13 @@ namespace dvld.data
                     {
                         TestAppointmentID = (int)reader["TestAppointmentID"],
                         AppointmentDate = (DateTime)reader["AppointmentDate"],
-                        TestTypeID = (int)reader["TestTypeID"],
+                        TestTypeTitle = (string)reader["TestTypeTitle"],
                         LocalDrivingLicenseApplicationID = (int)reader["LocalDrivingLicenseApplicationID"],
                         PaidFees = Convert.ToSingle(reader["PaidFees"]),
                         FullName = reader["FullName"].ToString(),
-                        IsLocked = (bool)reader["IsLocked"]
+                        IsLocked = (bool)reader["IsLocked"],
+                        ClassName = (string)reader["ClassName"] 
+                      
 
                     }); 
             

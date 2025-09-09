@@ -46,32 +46,35 @@ namespace DTOs
     {
         public int TestAppointmentID { get; set; }
         public DateTime AppointmentDate { get; set; }
-        public int TestTypeID { get; set; }
+        public string TestTypeTitle { get; set; }
         public int LocalDrivingLicenseApplicationID { get; set; }
         public float PaidFees { set; get; }
         public string FullName { set; get; }
         public bool IsLocked { set; get; }
     
+        public string ClassName { set; get; }
         public TestAppointmentDetailsDTO ()
         {
             TestAppointmentID = -1;
             AppointmentDate = DateTime.Now;
-            TestTypeID = -1;
+            TestTypeTitle = "";
             LocalDrivingLicenseApplicationID = -1;  
             PaidFees = 0;
             FullName = string.Empty;
             IsLocked = false;
+            ClassName = "";
 
         }
-        public TestAppointmentDetailsDTO(int testAppointmentID, DateTime appointmentDate, int testTypeID, int localDrivingLicenseApplicationID, float paidFees, string fullName, bool isLocked)
+        public TestAppointmentDetailsDTO(int testAppointmentID, DateTime appointmentDate, string testTypeTitle, int localDrivingLicenseApplicationID, float paidFees,string className, string fullName, bool isLocked)
         {
             TestAppointmentID = testAppointmentID;
             AppointmentDate = appointmentDate;
-            TestTypeID = testTypeID;
+            TestTypeTitle = testTypeTitle; 
             LocalDrivingLicenseApplicationID = localDrivingLicenseApplicationID;
             PaidFees = paidFees;
             FullName = fullName;
             IsLocked = isLocked;
+            ClassName = className; 
         }
 
     }

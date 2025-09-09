@@ -52,7 +52,7 @@ namespace dvld.api.Controllers
             return Ok(DTO);
         }
 
-        [HttpGet("LastTestAppointment/{LocalApplicationID}/TestType/{testTypeID}")]
+        [HttpGet("LastTestAppointment/{LocalApplicationID}/TestTypeTitle/{testTypeID}")]
         public ActionResult<TestAppointmentDTO> GetLastTestAppointment(int LocalApplicationID, int testTypeID)
         {
             if (LocalApplicationID <= 0 || testTypeID <= 0)
@@ -68,7 +68,7 @@ namespace dvld.api.Controllers
             {
                 TestAppointmentID = appointment.TestAppointmentID,
                 AppointmentDate = appointment.AppointmentDate,
-                TestTypeID = (int)appointment.TestTypeID,
+                TestTypeID =(int)appointment.TestTypeID,
                 LocalDrivingLicenseApplicationID = appointment.LocalDrivingLicenseApplicationID,
                 PaidFees = appointment.PaidFees,
                 CreatedByUserID = appointment.CreatedByUserID,
@@ -151,5 +151,41 @@ namespace dvld.api.Controllers
             };
             return Ok(updatedDTO);
         }
+   
+        [HttpGet("{LocalApplicationID}/GetAllAppointmetPerTestType/{TestTypeId}")]
+
+        public ActionResult<IEnumerable<TestAppointmentViewDTO>> GetAllAppointmetPerTestType(int LocalApplicationID, int TestTypeId)
+        {
+            if(LocalApplicationID<= 0 || TestTypeId <= 0)
+            {
+              return BadRequest("Invalid"); 
+            }
+            clsLocalDrivingLicenseApplication application = clsLocalDrivingLicenseApplication.FindByLocalDrivingAppLicenseID(LocalApplicationID);
+             if(application == null)
+            {
+                return NotFound("No application found");
+            }
+            
+             List<TestAppointmentViewDTO> list = new List<TestAppointmentViewDTO>();
+            list = clsTestAppointment.GetApplicationTestAppointmentsPerTestType(LocalApplicationID, (clsTestType.enTestType)TestTypeId);
+        
+            return Ok(list);
+        }
+
+        [HttpGet("{localAppId}/GetTestAppointmentsPerTestType/{testTypeId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TestAppointmentViewDTO>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<IEnumerable<TestAppointmentViewDTO>> GetTestAppointmentsPerTestType( int localAppId, int testTypeId)
+        {
+            if (!Enum.IsDefined(typeof(clsTestType.enTestType), testTypeId))
+                return BadRequest("Invalid TestTypeID");
+
+            var list = clsTestAppointment.GetApplicationTestAppointmentsPerTestType(localAppId, (clsTestType.enTestType)testTypeId);
+
+            return Ok(list);
+        }
+
+
+
     }
 }
