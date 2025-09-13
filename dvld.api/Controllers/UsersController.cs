@@ -1,4 +1,5 @@
 ﻿using DTOs;
+using dvld.business;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +15,10 @@ namespace dvld.api.Controllers
         [HttpGet("GetByID/{userID}")]
         public ActionResult<UserDTO> FindByID(int userID)
         {
-            if(userID <= 0)
+            if (userID <= 0)
                 return BadRequest("Invalid UserID");
             var user = business.clsUser.FindByUserID(userID);
-            if(user == null)
+            if (user == null)
                 return NotFound();
             return Ok(user);
 
@@ -36,16 +37,88 @@ namespace dvld.api.Controllers
         }
 
         [HttpGet("{password}/FindByUsernameAndPassword/{username}")]
-        public ActionResult<UserDTO> FindByUsernameAndPassword(string username ,string password)
+        public ActionResult<UserDTO> FindByUsernameAndPassword(string username, string password)
         {
-            if (username ==null ||password==null)
+            if (username == null || password == null)
                 return BadRequest("Invalid UserID");
-            var user = business.clsUser.FindByUsernameAndPassword(username, password); 
+            var user = business.clsUser.FindByUsernameAndPassword(username, password);
             if (user == null)
                 return NotFound();
             return Ok(user);
 
         }
 
+        [HttpGet("isUserExist/{userID}")]
+        public ActionResult<bool> isUserExist(int userID)
+        {
+            if (userID <= 0)
+                return BadRequest($"Invalid User ID: {userID}");
+
+            bool isExist = clsUser.isUserExist(userID);
+
+            if (!isExist)
+                return NotFound($"User with ID {userID} not found.");
+
+            return Ok(true);
+        }
+
+        [HttpGet("ISExist/{username}")]
+        public ActionResult<bool> IsUserExistByusername(string username)
+
+        {
+            if (username == null)
+            {
+                return BadRequest($"invalid username{username}");
+            }
+            var isExist = clsUser.isUserExist(username);
+
+            return Ok(isExist);
+        }
+
+        [HttpGet("GetAllUsers")]
+        public ActionResult<List<UserDetailsDTO>> GetAllUsers()
+        {
+            var users = clsUser.GetAllUsers();
+            return Ok(users);
+        }
+
+        [HttpDelete("Delete/{userID}")]
+        public ActionResult Delete(int userID)
+        {
+            if (userID <= 0)
+                return BadRequest("Invalid UserID");
+
+            var result = clsUser.DeleteUser(userID);
+            if (result)
+                return Ok();
+            else
+                return StatusCode(500, "An error occurred while deleting the user.");
+        }
+
+        [HttpPost("CreateUser")]
+        public ActionResult<UserDTO> CreateUser([FromBody] UserDTO userDto)
+        {
+
+            if (userDto == null)
+                return BadRequest("User data is null.");
+
+            var user = new clsUser
+            {
+                PersonID = userDto.PersonID,
+                UserName = userDto.UserName,
+                Password = userDto.Password,
+                IsActive = userDto.IsActive
+            };
+
+            if (user.Save())
+            {
+                userDto.UserID = user.UserID;
+                return CreatedAtAction(nameof(FindByID), new { userID = user.UserID }, userDto);
+            }
+            else
+            {
+                return StatusCode(500, "An error occurred while creating the user.");
+            }
+        }
     }
 }
