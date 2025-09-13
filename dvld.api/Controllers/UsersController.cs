@@ -62,7 +62,7 @@ namespace dvld.api.Controllers
             return Ok(true);
         }
 
-        [HttpGet("ISExist/{username}")]
+        [HttpGet("IsExist/{username}")]
         public ActionResult<bool> IsUserExistByusername(string username)
 
         {
@@ -120,5 +120,49 @@ namespace dvld.api.Controllers
                 return StatusCode(500, "An error occurred while creating the user.");
             }
         }
+      
+        [HttpPut("UpdateUser/{userID}")]
+        public ActionResult<UserDTO> Edit(int userID, [FromBody] UserDTO userDto)
+        {
+            if (userDto == null || userID != userDto.UserID)
+                return BadRequest("User data is invalid.");
+            var user = clsUser.FindByUserID(userID);
+
+            user.PersonID = userDto.PersonID;
+            user.UserName = userDto.UserName;
+            user.Password = userDto.Password;
+            user.IsActive = userDto.IsActive;
+            if (user.Save())
+            {
+                var userDTO = new UserDTO
+                {
+                    UserID = user.UserID,
+                    PersonID = user.PersonID,
+                    UserName = user.UserName,
+                    Password = user.Password,
+                    IsActive = user.IsActive
+                };
+                return Ok(userDTO);
+            }
+            else
+            {
+                return StatusCode(500, "An error occurred while updating the user.");
+            }
+
+        }
+
+        [HttpGet("IsUserExistByPersonID/{personID}")]
+        public ActionResult<bool> IsUserExistByPersonID(int personID)
+
+        {
+            if (personID <=0)
+            {
+                return BadRequest($"invalid username{personID}");
+            }
+            var isExist = clsUser.isUserExistForPersonID(personID); 
+
+            return Ok(isExist);
+        }
+
     }
 }
