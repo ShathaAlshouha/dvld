@@ -118,10 +118,10 @@ namespace dvld.data
 
 
 
-        public static DataTable GetAllLicenseClasses()
+        public static List<LicenseClassDTO> GetAllLicenseClasses()
         {
 
-            DataTable dt = new DataTable();
+            List<LicenseClassDTO> list = new List<LicenseClassDTO>();
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
             string query = "SELECT * FROM LicenseClasses order by ClassName";
@@ -134,10 +134,16 @@ namespace dvld.data
 
                 SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.HasRows)
-
+                while (reader.Read())
                 {
-                    dt.Load(reader);
+                    list.Add(new LicenseClassDTO(
+                        (int)reader["LicenseClassID"],
+                        (string)reader["ClassName"],
+                        (string)reader["ClassDescription"],
+                        (byte)reader["MinimumAllowedAge"],
+                        (byte)reader["DefaultValidityLength"],
+                        Convert.ToSingle(reader["ClassFees"])
+                        ));
                 }
 
                 reader.Close();
@@ -154,12 +160,11 @@ namespace dvld.data
                 connection.Close();
             }
 
-            return dt;
+            return list;
 
         }
 
-        public static int AddNewLicenseClass(string ClassName, string ClassDescription,
-            byte MinimumAllowedAge, byte DefaultValidityLength, float ClassFees)
+        public static int AddNewLicenseClass(LicenseClassDTO dto)
         {
             int LicenseClassID = -1;
 
@@ -179,11 +184,11 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@ClassName", ClassName);
-            command.Parameters.AddWithValue("@ClassDescription", ClassDescription);
-            command.Parameters.AddWithValue("@MinimumAllowedAge", MinimumAllowedAge);
-            command.Parameters.AddWithValue("@DefaultValidityLength", DefaultValidityLength);
-            command.Parameters.AddWithValue("@ClassFees", ClassFees);
+            command.Parameters.AddWithValue("@ClassName", dto.ClassName);
+            command.Parameters.AddWithValue("@ClassDescription", dto.ClassDescription);
+            command.Parameters.AddWithValue("@MinimumAllowedAge", dto.MinimumAllowedAge);
+            command.Parameters.AddWithValue("@DefaultValidityLength", dto.DefaultValidityLength);
+            command.Parameters.AddWithValue("@ClassFees", dto.ClassFees);
 
 
 
@@ -215,9 +220,7 @@ namespace dvld.data
 
         }
 
-        public static bool UpdateLicenseClass(int LicenseClassID, string ClassName,
-            string ClassDescription,
-            byte MinimumAllowedAge, byte DefaultValidityLength, float ClassFees)
+        public static bool UpdateLicenseClass( LicenseClassDTO dto)
         {
 
             int rowsAffected = 0;
@@ -233,12 +236,12 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@LicenseClassID", LicenseClassID);
-            command.Parameters.AddWithValue("@ClassName", ClassName);
-            command.Parameters.AddWithValue("@ClassDescription", ClassDescription);
-            command.Parameters.AddWithValue("@MinimumAllowedAge", MinimumAllowedAge);
-            command.Parameters.AddWithValue("@DefaultValidityLength", DefaultValidityLength);
-            command.Parameters.AddWithValue("@ClassFees", ClassFees);
+            command.Parameters.AddWithValue("@LicenseClassID", dto.LicenseClassID);
+            command.Parameters.AddWithValue("@ClassName", dto.ClassName);
+            command.Parameters.AddWithValue("@ClassDescription",  dto.ClassDescription);
+            command.Parameters.AddWithValue("@MinimumAllowedAge", dto.MinimumAllowedAge);
+            command.Parameters.AddWithValue("@DefaultValidityLength", dto.DefaultValidityLength);
+            command.Parameters.AddWithValue("@ClassFees", dto.ClassFees);
 
 
             try

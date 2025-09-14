@@ -52,10 +52,16 @@ namespace dvld.business
 
         private bool _AddNewLicenseClass()
         {
-            //call DataAccess Layer 
+            LicenseClassDTO licenseClassDTO = new LicenseClassDTO
+            {
+                ClassDescription = this.ClassDescription,
+                MinimumAllowedAge = this.MinimumAllowedAge,
+                DefaultValidityLength = this.DefaultValidityLength,
+                ClassFees = this.ClassFees,
+                ClassName = this.ClassName
 
-            this.LicenseClassID = clsLicenseClassData.AddNewLicenseClass(this.ClassName, this.ClassDescription,
-                this.MinimumAllowedAge, this.DefaultValidityLength, this.ClassFees);
+            };
+            this.LicenseClassID = clsLicenseClassData.AddNewLicenseClass(licenseClassDTO);
 
 
             return (this.LicenseClassID != -1);
@@ -63,10 +69,17 @@ namespace dvld.business
 
         private bool _UpdateLicenseClass()
         {
-            //call DataAccess Layer 
 
-            return clsLicenseClassData.UpdateLicenseClass(this.LicenseClassID, this.ClassName, this.ClassDescription,
-                this.MinimumAllowedAge, this.DefaultValidityLength, this.ClassFees);
+            LicenseClassDTO licenseClassDTO = new LicenseClassDTO
+            {
+                ClassDescription = this.ClassDescription,
+                MinimumAllowedAge = this.MinimumAllowedAge,
+                DefaultValidityLength = this.DefaultValidityLength,
+                ClassFees = this.ClassFees,
+                ClassName = this.ClassName
+
+            };
+            return clsLicenseClassData.UpdateLicenseClass(this.LicenseClassID, licenseClassDTO); 
         }
 
         public static clsLicenseClass Find(int LicenseClassID)
@@ -95,7 +108,7 @@ namespace dvld.business
 
         }
 
-        public static DataTable GetAllLicenseClasses()
+        public static List<LicenseClassDTO> GetAllLicenseClasses()
         {
             return clsLicenseClassData.GetAllLicenseClasses();
 
