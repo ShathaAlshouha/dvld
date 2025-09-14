@@ -1,4 +1,5 @@
-﻿using dvld.data;
+﻿using DTOs;
+using dvld.data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -70,14 +71,12 @@ namespace dvld.business
 
         public static clsLicenseClass Find(int LicenseClassID)
         {
-            string ClassName = ""; string ClassDescription = "";
-            byte MinimumAllowedAge = 18; byte DefaultValidityLength = 10; float ClassFees = 0;
+           LicenseClassDTO licenseClassDTO = new LicenseClassDTO();
 
-            if (clsLicenseClassData.GetLicenseClassInfoByID(LicenseClassID, ref ClassName, ref ClassDescription,
-                    ref MinimumAllowedAge, ref DefaultValidityLength, ref ClassFees))
+            if (clsLicenseClassData.GetLicenseClassInfoByID(LicenseClassID, ref licenseClassDTO))
 
-                return new clsLicenseClass(LicenseClassID, ClassName, ClassDescription,
-                    MinimumAllowedAge, DefaultValidityLength, ClassFees);
+                return new clsLicenseClass(LicenseClassID, licenseClassDTO.ClassName, licenseClassDTO.ClassDescription,
+                    licenseClassDTO.MinimumAllowedAge, licenseClassDTO.DefaultValidityLength, licenseClassDTO.ClassFees);
             else
                 return null;
 
@@ -85,14 +84,12 @@ namespace dvld.business
 
         public static clsLicenseClass Find(string ClassName)
         {
-            int LicenseClassID = -1; string ClassDescription = "";
-            byte MinimumAllowedAge = 18; byte DefaultValidityLength = 10; float ClassFees = 0;
+            LicenseClassDTO licenseClassDTO = new LicenseClassDTO();
 
-            if (clsLicenseClassData.GetLicenseClassInfoByClassName(ClassName, ref LicenseClassID, ref ClassDescription,
-                    ref MinimumAllowedAge, ref DefaultValidityLength, ref ClassFees))
+            if (clsLicenseClassData.GetLicenseClassInfoByClassName(ClassName,ref licenseClassDTO))
 
-                return new clsLicenseClass(LicenseClassID, ClassName, ClassDescription,
-                    MinimumAllowedAge, DefaultValidityLength, ClassFees);
+                return new clsLicenseClass(licenseClassDTO.LicenseClassID, ClassName,  licenseClassDTO.ClassDescription,
+                    licenseClassDTO.MinimumAllowedAge, licenseClassDTO.DefaultValidityLength, licenseClassDTO.ClassFees);
             else
                 return null;
 

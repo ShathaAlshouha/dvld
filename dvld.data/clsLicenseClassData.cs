@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DTOs;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -11,9 +12,7 @@ namespace dvld.data
     public class clsLicenseClassData
     {
 
-        public static bool GetLicenseClassInfoByID(int LicenseClassID,
-            ref string ClassName, ref string ClassDescription, ref byte MinimumAllowedAge,
-            ref byte DefaultValidityLength, ref float ClassFees)
+        public static bool GetLicenseClassInfoByID(int LicenseClassID,ref LicenseClassDTO licenseClassDTO)
         {
             bool isFound = false;
 
@@ -32,19 +31,19 @@ namespace dvld.data
 
                 if (reader.Read())
                 {
-                    // The record was found
+                  
                     isFound = true;
 
-                    ClassName = (string)reader["ClassName"];
-                    ClassDescription = (string)reader["ClassDescription"];
-                    MinimumAllowedAge = (byte)reader["MinimumAllowedAge"];
-                    DefaultValidityLength = (byte)reader["DefaultValidityLength"];
-                    ClassFees = Convert.ToSingle(reader["ClassFees"]);
+                    licenseClassDTO.ClassName = (string)reader["ClassName"];
+                    licenseClassDTO.ClassDescription = (string)reader["ClassDescription"];
+                    licenseClassDTO.MinimumAllowedAge = (byte)reader["MinimumAllowedAge"];
+                    licenseClassDTO.DefaultValidityLength = (byte)reader["DefaultValidityLength"];
+                    licenseClassDTO.ClassFees = Convert.ToSingle(reader["ClassFees"]);
 
                 }
                 else
                 {
-                    // The record was not found
+                   
                     isFound = false;
                 }
 
@@ -66,9 +65,7 @@ namespace dvld.data
         }
 
 
-        public static bool GetLicenseClassInfoByClassName(string ClassName, ref int LicenseClassID,
-            ref string ClassDescription, ref byte MinimumAllowedAge,
-           ref byte DefaultValidityLength, ref float ClassFees)
+        public static bool GetLicenseClassInfoByClassName(string ClassName, ref LicenseClassDTO licenseClassDTO)
         {
             bool isFound = false;
 
@@ -89,12 +86,12 @@ namespace dvld.data
                 {
                     // The record was found
                     isFound = true;
-                    LicenseClassID = (int)reader["LicenseClassID"];
-                    ClassDescription = (string)reader["ClassDescription"];
-                    MinimumAllowedAge = (byte)reader["MinimumAllowedAge"];
-                    DefaultValidityLength = (byte)reader["DefaultValidityLength"];
-                    ClassFees = Convert.ToSingle(reader["ClassFees"]);
-
+                    licenseClassDTO.LicenseClassID = (int)reader["LicenseClassID"];
+                    licenseClassDTO.ClassDescription = (string)reader["ClassDescription"];
+                    licenseClassDTO.MinimumAllowedAge = (byte)reader["MinimumAllowedAge"];
+                    licenseClassDTO.DefaultValidityLength = (byte)reader["DefaultValidityLength"];
+                    licenseClassDTO.ClassFees = Convert.ToSingle(reader["ClassFees"]);
+                 
                 }
                 else
                 {
