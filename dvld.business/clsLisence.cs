@@ -1,4 +1,5 @@
-﻿using dvld.data;
+﻿using DTOs;
+using dvld.data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,13 +74,41 @@ namespace dvld.business
 
         private bool _AddNewLisence()
         {
-            this.LicenseID = clsLisenceData.AddNewLicense(
-                this.ApplicationID, this.DriverID, this.LicenseClass,
-                this.IssueDate, this.ExpirationDate, this.Notes,
-                this.PaidFees, this.IsActive, (byte)this.IssueReason, this.CreatedByUserID);
+            var license = new LicenseDTO
+            {
+                ApplicationID = this.ApplicationID,
+                DriverID = this.DriverID,
+                LicenseClass = this.LicenseClass,
+                IssueDate = this.IssueDate,
+                ExpirationDate = this.ExpirationDate,
+                Notes = this.Notes,
+                PaidFees = this.PaidFees,
+                IsActive = this.IsActive,
+                IssueReason = (byte)this.IssueReason,
+                CreatedByUserID = this.CreatedByUserID
+            };
+            this.LicenseID = clsLisenceData.AddNewLicense(license);
             return this.LicenseID != -1;
         }
-    
+
+        private bool _UpdateLisence()
+        {
+            var license = new LicenseDTO
+            {
+                ApplicationID = this.ApplicationID,
+                DriverID = this.DriverID,
+                LicenseClass = this.LicenseClass,
+                IssueDate = this.IssueDate,
+                ExpirationDate = this.ExpirationDate,
+                Notes = this.Notes,
+                PaidFees = this.PaidFees,
+                IsActive = this.IsActive,
+                IssueReason = (byte)this.IssueReason,
+                CreatedByUserID = this.CreatedByUserID
+            };
+
+            return clsLisenceData.UpdateLicense(license);
+        }
     }
 }
 

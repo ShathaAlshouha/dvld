@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DTOs;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -11,9 +12,7 @@ namespace dvld.data
     public class clsLisenceData
     {
 
-        public static bool GetLisenceInfoByID(int LicenseID, ref int ApplicationID, ref int DriverID, ref int LicenseClass,
-            ref DateTime IssueDate, ref DateTime ExpirationDate, ref string Notes,
-            ref float PaidFees, ref bool IsActive, ref byte IssueReason, ref int CreatedByUserID)
+        public static bool GetLisenceInfoByID(int LicenseID, ref LicenseDTO licenseDTO)
         {
             bool isFound = false;
 
@@ -35,21 +34,21 @@ namespace dvld.data
 
 
                     isFound = true;
-                    ApplicationID = (int)reader["ApplicationID"];
-                    DriverID = (int)reader["DriverID"];
-                    LicenseClass = (int)reader["LicenseClass"];
-                    IssueDate = (DateTime)reader["IssueDate"];
-                    ExpirationDate = (DateTime)reader["ExpirationDate"];
+                    licenseDTO.ApplicationID = (int)reader["ApplicationID"];
+                    licenseDTO.DriverID = (int)reader["DriverID"];
+                    licenseDTO.LicenseClass = (int)reader["LicenseClass"];
+                    licenseDTO.IssueDate = (DateTime)reader["IssueDate"];
+                    licenseDTO.ExpirationDate = (DateTime)reader["ExpirationDate"];
 
                     if (reader["Notes"] == DBNull.Value)
-                        Notes = "";
+                        licenseDTO.Notes = "";
                     else
-                        Notes = (string)reader["Notes"];
+                        licenseDTO.Notes = (string)reader["Notes"];
 
-                    PaidFees = Convert.ToSingle(reader["PaidFees"]);
-                    IsActive = (bool)reader["IsActive"];
-                    IssueReason = (byte)reader["IssueReason"];
-                    CreatedByUserID = (int)reader["DriverID"];
+                    licenseDTO.PaidFees = Convert.ToSingle(reader["PaidFees"]);
+                    licenseDTO.IsActive = (bool)reader["IsActive"];
+                    licenseDTO.IssueReason = (byte)reader["IssueReason"];
+                    licenseDTO.CreatedByUserID = (int)reader["DriverID"];
 
                 }
                 else
@@ -78,10 +77,10 @@ namespace dvld.data
         }
 
 
-        public static DataTable GetAllLicenses()
+        public static List<LicenseDTO> GetAllLicenses()
         {
 
-            DataTable dt = new DataTable();
+            List<LicenseDTO> list = new List<LicenseDTO>();
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
             string query = "SELECT * FROM Licenses";
 
@@ -92,10 +91,24 @@ namespace dvld.data
                 connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.HasRows)
+                while (reader.Read())
 
                 {
-                    dt.Load(reader);
+                    list.Add(new LicenseDTO
+                    {
+                        LicenseID = (int)reader["LicenseID"],
+                        ApplicationID = (int)reader["ApplicationID"],
+                        DriverID = (int)reader["DriverID"],
+                        LicenseClass = (int)reader["LicenseClass"],
+                        IssueDate = (DateTime)reader["IssueDate"],
+                        ExpirationDate = (DateTime)reader["ExpirationDate"],
+                        Notes = reader["Notes"] == DBNull.Value ? "" : (string)reader["Notes"],
+                        PaidFees = Convert.ToSingle(reader["PaidFees"]),
+                        IsActive = (bool)reader["IsActive"],
+                        IssueReason = (byte)reader["IssueReason"],
+                        CreatedByUserID = (int)reader["CreatedByUserID"]
+
+                    });
                 }
 
                 reader.Close();
@@ -110,15 +123,15 @@ namespace dvld.data
                 connection.Close();
             }
 
-            return dt;
+            return list;
 
         }
 
 
-        public static DataTable GetDriverLicenses(int DriverID)
+        public static List<LicenseViewDTO> GetDriverLicenses(int DriverID)
         {
 
-            DataTable dt = new DataTable();
+            List<LicenseViewDTO> list = new List<LicenseViewDTO>();
             SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
 
             string query = @"SELECT     
@@ -140,10 +153,20 @@ namespace dvld.data
 
                 SqlDataReader reader = command.ExecuteReader();
 
-                if (reader.HasRows)
-
+                while (reader.Read())
                 {
-                    dt.Load(reader);
+                    list.Add(new LicenseViewDTO
+                    {
+                        licenseID = (int)reader["LicenseID"],
+                        applicationID = (int)reader["ApplicationID"],
+                        licenseClassName = (string)reader["ClassName"],
+                        IssueDate = (DateTime)reader["IssueDate"],
+                        ExpirationDate = (DateTime)reader["ExpirationDate"],
+                        IsActive = (bool)reader["IsActive"]
+
+                    });
+                  
+                   
                 }
 
                 reader.Close();
@@ -161,9 +184,7 @@ namespace dvld.data
 
         }
 
-        public static int AddNewLicense(int ApplicationID, int DriverID, int LicenseClass,
-            DateTime IssueDate, DateTime ExpirationDate, string Notes,
-            float PaidFees, bool IsActive, byte IssueReason, int CreatedByUserID)
+        public static int AddNewLicense(LicenseDTO newLicense)
         {
             int LicenseID = -1;
 
@@ -177,23 +198,23 @@ namespace dvld.data
                             SELECT SCOPE_IDENTITY();";
 
             SqlCommand command = new SqlCommand(query, connection);
-            command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
-            command.Parameters.AddWithValue("@DriverID", DriverID);
-            command.Parameters.AddWithValue("@LicenseClass", LicenseClass);
-            command.Parameters.AddWithValue("@IssueDate", IssueDate);
+            command.Parameters.AddWithValue("@ApplicationID", newLicense.ApplicationID);
+            command.Parameters.AddWithValue("@DriverID",newLicense.DriverID);
+            command.Parameters.AddWithValue("@LicenseClass",newLicense.LicenseClass);
+            command.Parameters.AddWithValue("@IssueDate",newLicense.IssueDate);
 
-            command.Parameters.AddWithValue("@ExpirationDate", ExpirationDate);
+            command.Parameters.AddWithValue("@ExpirationDate",newLicense.ExpirationDate);
 
-            if (Notes == "")
+            if (newLicense.Notes == "")
                 command.Parameters.AddWithValue("@Notes", DBNull.Value);
             else
-                command.Parameters.AddWithValue("@Notes", Notes);
+                command.Parameters.AddWithValue("@Notes",newLicense.Notes);
 
-            command.Parameters.AddWithValue("@PaidFees", PaidFees);
-            command.Parameters.AddWithValue("@IsActive", IsActive);
-            command.Parameters.AddWithValue("@IssueReason", IssueReason);
+            command.Parameters.AddWithValue("@PaidFees",newLicense.PaidFees);
+            command.Parameters.AddWithValue("@IsActive", newLicense.IsActive);
+            command.Parameters.AddWithValue("@IssueReason", newLicense.IssueReason);
 
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
+            command.Parameters.AddWithValue("@CreatedByUserID", newLicense.CreatedByUserID);
 
             try
             {
@@ -220,9 +241,7 @@ namespace dvld.data
 
         }
 
-        public static bool UpdateLicense(int LicenseID, int ApplicationID, int DriverID, int LicenseClass,
-            DateTime IssueDate, DateTime ExpirationDate, string Notes,
-            float PaidFees, bool IsActive, byte IssueReason, int CreatedByUserID)
+        public static bool UpdateLicense(LicenseDTO licenseDTO)
         {
 
             int rowsAffected = 0;
@@ -241,22 +260,22 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@LicenseID", LicenseID);
-            command.Parameters.AddWithValue("@ApplicationID", ApplicationID);
-            command.Parameters.AddWithValue("@DriverID", DriverID);
-            command.Parameters.AddWithValue("@LicenseClass", LicenseClass);
-            command.Parameters.AddWithValue("@IssueDate", IssueDate);
-            command.Parameters.AddWithValue("@ExpirationDate", ExpirationDate);
+            command.Parameters.AddWithValue("@LicenseID", licenseDTO.LicenseID);
+            command.Parameters.AddWithValue("@ApplicationID", licenseDTO.ApplicationID);
+            command.Parameters.AddWithValue("@DriverID", licenseDTO.DriverID);
+            command.Parameters.AddWithValue("@LicenseClass", licenseDTO.LicenseClass);
+            command.Parameters.AddWithValue("@IssueDate", licenseDTO.IssueDate);
+            command.Parameters.AddWithValue("@ExpirationDate",   licenseDTO.ExpirationDate);
 
-            if (Notes == "")
+            if (licenseDTO.Notes == "")
                 command.Parameters.AddWithValue("@Notes", DBNull.Value);
             else
-                command.Parameters.AddWithValue("@Notes", Notes);
+                command.Parameters.AddWithValue("@Notes", licenseDTO.Notes);
 
-            command.Parameters.AddWithValue("@PaidFees", PaidFees);
-            command.Parameters.AddWithValue("@IsActive", IsActive);
-            command.Parameters.AddWithValue("@IssueReason", IssueReason);
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
+            command.Parameters.AddWithValue("@PaidFees", licenseDTO.PaidFees);
+            command.Parameters.AddWithValue("@IsActive", licenseDTO.IsActive);
+            command.Parameters.AddWithValue("@IssueReason", licenseDTO.IssueReason);
+            command.Parameters.AddWithValue("@CreatedByUserID", licenseDTO.CreatedByUserID);
 
             try
             {

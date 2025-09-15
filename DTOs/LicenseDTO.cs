@@ -53,4 +53,36 @@ namespace DTOs
             CreatedByUserID = createdByUserID;
         }
     }
+
+    public class LicenseViewDTO
+    {
+        public int licenseID { get; set; }
+        public int applicationID { get; set; }
+
+        public string licenseClassName { get; set; }
+        public DateTime ExpirationDate { get; set; }
+        public DateTime IssueDate { get; set; }
+        public bool IsActive { get; set; }
+
+        public LicenseViewDTO()
+        {
+            licenseID = 0;
+            applicationID = 0;
+            licenseClassName = string.Empty;
+            ExpirationDate = DateTime.Now;
+            IssueDate = DateTime.Now;
+            IsActive = true;
+        }
+        public LicenseViewDTO(int licenseID, int applicationID, string licenseClassName, DateTime expirationDate, DateTime issueDate, bool isActive)
+        {
+            this.licenseID = licenseID;
+            this.applicationID = applicationID;
+            this.licenseClassName = licenseClassName;
+            ExpirationDate = expirationDate;
+            IssueDate = issueDate;
+            IsActive = isActive;
+        }
+
+    }
+
 }
