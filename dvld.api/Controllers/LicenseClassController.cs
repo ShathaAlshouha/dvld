@@ -22,6 +22,29 @@ namespace dvld.api.Controllers
             }
             return Ok(licenseClassDTO);
         }
+        [HttpGet("{id}")]
+        public ActionResult<LicenseClassDTO> Get(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("");
+            }
+            var licensClss = clsLicenseClass.Find(id);
+            if (licensClss == null)
+            {
+                return NotFound("LicensClss NotFound");
+            }
+            var LisencClassDTO = new LicenseClassDTO
+            {
+                LicenseClassID = licensClss.LicenseClassID,
+                DefaultValidityLength = licensClss.DefaultValidityLength,
+                ClassDescription = licensClss.ClassDescription,
+                ClassFees = licensClss.ClassFees,
+                MinimumAllowedAge = licensClss.MinimumAllowedAge,
+                ClassName = licensClss.ClassName
 
+            };
+            return Ok(LisencClassDTO);
+        }
     }
 }
