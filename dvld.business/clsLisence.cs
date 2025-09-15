@@ -109,6 +109,17 @@ namespace dvld.business
 
             return clsLisenceData.UpdateLicense(license);
         }
+
+
+        public static List<LicenseDTO> GetAllLicenses()
+        {
+            return clsLisenceData.GetAllLicenses();
+        }
+        public static List<LicenseViewDTO> GetDriverLicenses(int DriverID)
+        {
+            return clsLisenceData.GetDriverLicenses(DriverID);
+        }
+
     }
 }
 
