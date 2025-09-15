@@ -108,5 +108,42 @@ namespace dvld.api.Controllers
 
 
         }
+
+        [HttpPut("Update{id}")]
+        public ActionResult<LicenseClassDTO> Update(int id, [FromBody] LicenseClassDTO licenseClassDTO)
+        {
+
+            if (licenseClassDTO == null || id <= 0)
+            {
+                return BadRequest("");
+            }
+
+            clsLicenseClass licenseClass = clsLicenseClass.Find(licenseClassDTO.LicenseClassID);
+            if (licenseClass == null)
+            {
+                return NotFound("License Class Not Found");
+            }
+            licenseClass.ClassDescription = licenseClassDTO.ClassDescription;
+            licenseClass.ClassFees = licenseClassDTO.ClassFees;
+            licenseClass.ClassName = licenseClassDTO.ClassName;
+            licenseClass.DefaultValidityLength = licenseClassDTO.DefaultValidityLength;
+            licenseClass.MinimumAllowedAge = licenseClassDTO.MinimumAllowedAge;
+
+            if (!licenseClass.Save())
+            {
+
+                return BadRequest("Could not update License Class");
+            }
+            LicenseClassDTO dto = new LicenseClassDTO
+            {
+                LicenseClassID = licenseClass.LicenseClassID,
+                ClassDescription = licenseClass.ClassDescription,
+                ClassFees = licenseClass.ClassFees,
+                ClassName = licenseClass.ClassName,
+                DefaultValidityLength = licenseClass.DefaultValidityLength,
+                MinimumAllowedAge = licenseClass.MinimumAllowedAge
+            };
+            return Ok(dto);
+        }
     }
 }
