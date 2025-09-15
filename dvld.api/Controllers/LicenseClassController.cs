@@ -23,7 +23,7 @@ namespace dvld.api.Controllers
             return Ok(licenseClassDTO);
         }
         [HttpGet("{id}")]
-        public ActionResult<LicenseClassDTO> Get(int id)
+        public ActionResult<LicenseClassDTO> GetByID(int id)
         {
             if (id <= 0)
             {
@@ -45,6 +45,68 @@ namespace dvld.api.Controllers
 
             };
             return Ok(LisencClassDTO);
+        }
+
+        [HttpGet("{classname}/")]
+        public ActionResult<LicenseClassDTO> GetByClassName(int classname)
+        {
+            if (classname <= 0)
+            {
+                return BadRequest("");
+            }
+            var licensClss = clsLicenseClass.Find(classname);
+            if (licensClss == null)
+            {
+                return NotFound("LicensClss NotFound");
+            }
+            var LisencClassDTO = new LicenseClassDTO
+            {
+                LicenseClassID = licensClss.LicenseClassID,
+                DefaultValidityLength = licensClss.DefaultValidityLength,
+                ClassDescription = licensClss.ClassDescription,
+                ClassFees = licensClss.ClassFees,
+                MinimumAllowedAge = licensClss.MinimumAllowedAge,
+                ClassName = licensClss.ClassName
+
+            };
+            return Ok(LisencClassDTO);
+        }
+
+        [HttpPost("Create")]
+        public ActionResult<LicenseClassDTO> Create([FromBody] LicenseClassDTO licenseClassDTO)
+        {
+
+            if (licenseClassDTO == null)
+            {
+                return BadRequest("");
+            }
+
+            clsLicenseClass licenseClass = new clsLicenseClass
+            {
+                ClassDescription = licenseClassDTO.ClassDescription,
+                ClassFees = licenseClassDTO.ClassFees,
+                ClassName = licenseClassDTO.ClassName,
+                DefaultValidityLength = licenseClassDTO.DefaultValidityLength,
+                MinimumAllowedAge = licenseClassDTO.MinimumAllowedAge
+
+            };
+            if (!licenseClass.Save())
+            {
+
+                return BadRequest("Could not create License Class");
+            }
+            LicenseClassDTO dto = new LicenseClassDTO
+            {
+                LicenseClassID = licenseClass.LicenseClassID,
+                ClassDescription = licenseClass.ClassDescription,
+                ClassFees = licenseClass.ClassFees,
+                ClassName = licenseClass.ClassName,
+                DefaultValidityLength = licenseClass.DefaultValidityLength,
+                MinimumAllowedAge = licenseClass.MinimumAllowedAge
+            };
+            return Ok(dto);
+
+
         }
     }
 }
