@@ -110,7 +110,14 @@ namespace dvld.business
             return clsLisenceData.UpdateLicense(license);
         }
 
+        public LicenseDTO GetLicenseByID(int LicenseID)
+        {
 
+            LicenseDTO dto = new LicenseDTO();
+            clsLisenceData.GetLisenceInfoByID(LicenseID, ref dto);
+            return dto;
+
+        }
         public static List<LicenseDTO> GetAllLicenses()
         {
             return clsLisenceData.GetAllLicenses();
