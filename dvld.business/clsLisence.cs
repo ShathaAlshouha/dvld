@@ -110,7 +110,7 @@ namespace dvld.business
             return clsLisenceData.UpdateLicense(license);
         }
 
-        public LicenseDTO GetLicenseByID(int LicenseID)
+        public  static LicenseDTO GetLicenseByID(int LicenseID)
         {
 
             LicenseDTO dto = new LicenseDTO();
@@ -131,7 +131,6 @@ namespace dvld.business
         {
             return clsLisenceData.GetActiveLicenseIDByPersonID(PersonID, LicenseClassID);
         }
-   
     
         public static bool DeactivateLicense (int LicenseID)
         {

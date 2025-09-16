@@ -21,6 +21,30 @@ namespace dvld.api.Controllers
                 return NotFound("No Licenses found.");
             return Ok(Licenses);
         }
+        [HttpGet("GetByID/{id}")]
+        public ActionResult<LicenseDTO> GetLicenseByID(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid ID supplied.");
+            }
+            var license = clsLisence.GetLicenseByID(id);
+            if (license == null)
+                return NotFound($"License with ID {id} not found.");
+            return Ok(license);
+        }
+
+        [HttpGet("{LicenseClassID}GetActiveLisence/{personID}")]
+        public ActionResult<int> GetActiveLisence(int personID, int LicenseClassID)
+        {
+            if (personID <= 0)
+            {
+                return BadRequest("Invalid ID supplied.");
+            }
+            var license = clsLisence.GetActiveLicenseIDByPersonID(personID, LicenseClassID);
+            return license;
+        }
+
     }
 
 }
