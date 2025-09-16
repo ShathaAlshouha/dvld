@@ -119,7 +119,41 @@ namespace dvld.business
         {
             return clsLisenceData.GetDriverLicenses(DriverID);
         }
+       
+        public static int GetActiveLicenseIDByPersonID (int PersonID ,int LicenseClassID)
+        {
+            return clsLisenceData.GetActiveLicenseIDByPersonID(PersonID, LicenseClassID);
+        }
+   
+    
+        public static bool DeactivateLicense (int LicenseID)
+        {
+            return clsLisenceData.DeactivateLicense(LicenseID);
+        }
+        public bool Save()
+        {
+            switch (Mode)
+            {
+                case enMode.AddNew:
+                    if (_AddNewLisence())
+                    {
 
+                        Mode = enMode.Update;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                case enMode.Update:
+
+                    return _UpdateLisence();
+
+            }
+
+            return false;
+        }
     }
 }
 
