@@ -2,6 +2,7 @@
 using dvld.data;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -110,13 +111,17 @@ namespace dvld.business
             return clsLisenceData.UpdateLicense(license);
         }
 
-        public  static LicenseDTO GetLicenseByID(int LicenseID)
+        public static clsLisence GetLicenseByID(int LicenseID)
         {
 
             LicenseDTO dto = new LicenseDTO();
             clsLisenceData.GetLisenceInfoByID(LicenseID, ref dto);
-            return dto;
+            if (dto.LicenseID == -1)
+                return null;
 
+            return new clsLisence(dto.LicenseID, dto.ApplicationID, dto.DriverID, dto.LicenseClass, dto.IssueDate,
+                dto.ExpirationDate, dto.Notes, dto.PaidFees, dto.IsActive,
+                (enIssueReason)dto.IssueReason, dto.CreatedByUserID);
         }
         public static List<LicenseDTO> GetAllLicenses()
         {
@@ -126,13 +131,13 @@ namespace dvld.business
         {
             return clsLisenceData.GetDriverLicenses(DriverID);
         }
-       
-        public static int GetActiveLicenseIDByPersonID (int PersonID ,int LicenseClassID)
+
+        public static int GetActiveLicenseIDByPersonID(int PersonID, int LicenseClassID)
         {
             return clsLisenceData.GetActiveLicenseIDByPersonID(PersonID, LicenseClassID);
         }
-    
-        public static bool DeactivateLicense (int LicenseID)
+
+        public static bool DeactivateLicense(int LicenseID)
         {
             return clsLisenceData.DeactivateLicense(LicenseID);
         }
