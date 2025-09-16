@@ -180,7 +180,7 @@ namespace dvld.data
                 connection.Close();
             }
 
-            return dt;
+            return list;
 
         }
 

@@ -14,11 +14,13 @@ namespace dvld.api.Controllers
     {
 
         [HttpGet("GetAll")]
-        //public IActionResult<IEnumerable<LicenseDTO>> GetAll()
-        //{
-        //    var license = clsLisence.
-        //    return Ok("LicenseController - GetAll");
-        //}
+        public ActionResult<IEnumerable<LicenseDTO>> GetAllLicense()
+        {
+            var Licenses = clsLisence.GetAllLicenses();
+            if (Licenses == null || Licenses.Count == 0)
+                return NotFound("No Licenses found.");
+            return Ok(Licenses);
+        }
     }
 
 }

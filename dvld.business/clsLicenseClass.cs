@@ -79,7 +79,7 @@ namespace dvld.business
                 ClassName = this.ClassName
 
             };
-            return clsLicenseClassData.UpdateLicenseClass(this.LicenseClassID, licenseClassDTO); 
+            return clsLicenseClassData.UpdateLicenseClass(licenseClassDTO);
         }
 
         public static clsLicenseClass Find(int LicenseClassID)
