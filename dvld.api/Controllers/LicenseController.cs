@@ -158,6 +158,7 @@ namespace dvld.api.Controllers
             }
         }
 
+        [HttpPut("DeactiveLicense/{LicenseID}")]
         public ActionResult<bool> DeactiveLicense(int LicenseID)
         {
             if (LicenseID <= 0)

@@ -86,9 +86,16 @@ namespace dvld.business
 
         private bool _UpdateDetainedLicense()
         {
-     
-            return DetainedLicenseData.UpdateDetainedLicense(
-                this.DetainID, this.LicenseID, this.DetainDate, this.FineFees, this.CreatedByUserID);
+
+            DetainedLicenseDTO dto = new DetainedLicenseDTO
+            {
+                LicenseID = this.LicenseID,
+                DetainDate = this.DetainDate,
+                FineFees = this.FineFees,
+                CreatedByUserID = this.CreatedByUserID,
+
+            };
+            return DetainedLicenseData.UpdateDetainedLicense(dto);
         }
 
         public static clsDetainedLicense Find(int DetainID)
