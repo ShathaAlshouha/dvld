@@ -211,9 +211,7 @@ namespace dvld.data
 
         }
 
-        public static int AddNewDetainedLicense(
-            int LicenseID, DateTime DetainDate,
-            float FineFees, int CreatedByUserID)
+        public static int AddNewDetainedLicense( DetainedLicenseDTO dto)
         {
             int DetainID = -1;
 
@@ -238,10 +236,10 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@LicenseID", LicenseID);
-            command.Parameters.AddWithValue("@DetainDate", DetainDate);
-            command.Parameters.AddWithValue("@FineFees", FineFees);
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
+            command.Parameters.AddWithValue("@LicenseID", dto.LicenseID);
+            command.Parameters.AddWithValue("@DetainDate", dto.DetainDate);
+            command.Parameters.AddWithValue("@FineFees", dto.FineFees);
+            command.Parameters.AddWithValue("@CreatedByUserID", dto.CreatedByUserID);
 
             try
             {
@@ -271,9 +269,7 @@ namespace dvld.data
 
         }
 
-        public static bool UpdateDetainedLicense(int DetainID,
-            int LicenseID, DateTime DetainDate,
-            float FineFees, int CreatedByUserID)
+        public static bool UpdateDetainedLicense(DetainedLicenseDTO dto)
         {
 
             int rowsAffected = 0;
@@ -288,11 +284,11 @@ namespace dvld.data
 
             SqlCommand command = new SqlCommand(query, connection);
 
-            command.Parameters.AddWithValue("@DetainedLicenseID", DetainID);
-            command.Parameters.AddWithValue("@LicenseID", LicenseID);
-            command.Parameters.AddWithValue("@DetainDate", DetainDate);
-            command.Parameters.AddWithValue("@FineFees", FineFees);
-            command.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
+            command.Parameters.AddWithValue("@DetainedLicenseID", dto.DetainID);
+            command.Parameters.AddWithValue("@LicenseID", dto.LicenseID);
+            command.Parameters.AddWithValue("@DetainDate", dto.DetainDate);
+            command.Parameters.AddWithValue("@FineFees", dto.FineFees);
+            command.Parameters.AddWithValue("@CreatedByUserID", dto.CreatedByUserID);
 
 
             try
